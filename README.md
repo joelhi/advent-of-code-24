@@ -12,6 +12,6 @@ where `$day` is any day in the calendar up to the 25th. (If solved...)
 
 for example run
 ```rust
-cargo run 3
+cargo run --release 3
 ```
 to run the solution for day 3.

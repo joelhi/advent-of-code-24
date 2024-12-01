@@ -26,7 +26,7 @@ fn solve_day(day: &i32) -> Result<Vec<u32>, String> {
     };
 
     match day {
-        1 => Ok(day1::solve(&data)),
+        1 => day1::solve(&data),
         ..=25 => Err(format!("Day {} is not solved yet", day)),
         _ => Err(format!(
             "Number {} is not a valid day for the calendar...",

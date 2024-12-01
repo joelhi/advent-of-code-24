@@ -20,7 +20,7 @@ pub fn solve(data: &Vec<String>) -> Result<Vec<u32>, String> {
     }
 
     let mut answer_part_2 = 0;
-    for &num in first_list.iter(){
+    for &num in first_list.iter() {
         let num_matches = *matches.get(&num).unwrap_or(&0);
         answer_part_2 += num * num_matches;
     }
@@ -29,7 +29,7 @@ pub fn solve(data: &Vec<String>) -> Result<Vec<u32>, String> {
 }
 
 // Parse the text data into two lists of u32s.
-fn read_input_into_lists(data: &Vec<String>)->Result<(Vec<u32>, Vec<u32>), String> {
+fn read_input_into_lists(data: &Vec<String>) -> Result<(Vec<u32>, Vec<u32>), String> {
     let mut first_list: Vec<u32> = Vec::with_capacity(data.len());
     let mut second_list: Vec<u32> = Vec::with_capacity(data.len());
 
@@ -69,7 +69,7 @@ mod tests {
         // Wip
         let result =
             solve(&read_input_for_day(&1).expect("Expect the data file to be there.")).unwrap();
-        
+
         assert_eq!(2367773, result[0]);
         assert_eq!(21271939, result[1])
     }

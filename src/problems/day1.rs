@@ -19,7 +19,7 @@ fn solve_part_1(data: &Vec<String>) -> Result<u32, String> {
     second_list.sort();
 
     let mut result = 0;
-    for (first, second) in first_list.iter().zip(second_list){
+    for (first, second) in first_list.iter().zip(second_list) {
         result += first.abs_diff(second);
     }
 
@@ -54,7 +54,8 @@ mod tests {
     #[test]
     fn test_day_1() {
         // Wip
-        let result = solve(&read_input_for_day(&1).expect("Expect the data file to be there.")).unwrap();
+        let result =
+            solve(&read_input_for_day(&1).expect("Expect the data file to be there.")).unwrap();
         assert_eq!(2367773, result[0]);
     }
 }

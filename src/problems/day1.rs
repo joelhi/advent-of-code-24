@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 /// Solve the problem for day one, given the provided data.
-pub fn solve(data: &Vec<String>) -> Result<Vec<u32>, String> {
-    let (mut first_list, mut second_list) = read_input_into_lists(data)?;
+pub fn solve(input_data: &Vec<String>) -> Result<Vec<u32>, String> {
+    let (mut first_list, mut second_list) = read_input_into_lists(input_data)?;
 
     // Part 1
     first_list.sort();

@@ -73,15 +73,16 @@ fn validate_sequence_with_dampening(sequence: &[i32]) -> bool {
         // If the sequence has diffs causing problems, try to remove the entry before or after.
         let mut valid_found = false;
         for problematic_diff in problematic {
-            if validate_sequence_with_removed(sequence, problematic_diff.0) ||
-             validate_sequence_with_removed(sequence, problematic_diff.0 + 1) {
+            if validate_sequence_with_removed(sequence, problematic_diff.0)
+                || validate_sequence_with_removed(sequence, problematic_diff.0 + 1)
+            {
                 valid_found = true;
                 break;
             }
         }
         return valid_found;
     }
-    
+
     true
 }
 
@@ -109,9 +110,7 @@ fn validate_sequence_with_removed(sequence: &[i32], index: usize) -> bool {
 }
 
 // Count the number of occurrances of each diff type, classified as increasing, decreasing or invalid (flat or too big jump)
-fn sort_increment_types(
-    diffs: &[i32],
-) -> (Vec<DiffTuple>, Vec<DiffTuple>, Vec<DiffTuple>) {
+fn sort_increment_types(diffs: &[i32]) -> (Vec<DiffTuple>, Vec<DiffTuple>, Vec<DiffTuple>) {
     let (increases, decreases, invalid) = diffs.iter().enumerate().fold(
         (Vec::new(), Vec::new(), Vec::new()),
         |(mut inc, mut dec, mut inv), (i, &value)| {

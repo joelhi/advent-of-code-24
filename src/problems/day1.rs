@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 /// Solve the problem for day one, given the provided data.
-pub fn solve(input_data: &Vec<String>) -> Result<Vec<u32>, String> {
+pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
     let (mut first_list, mut second_list) = read_input_into_lists(input_data)?;
 
     // Part 1
@@ -29,7 +29,7 @@ pub fn solve(input_data: &Vec<String>) -> Result<Vec<u32>, String> {
 }
 
 // Parse the text data into two lists of u32s.
-fn read_input_into_lists(data: &Vec<String>) -> Result<(Vec<u32>, Vec<u32>), String> {
+fn read_input_into_lists(data: &[String]) -> Result<(Vec<u32>, Vec<u32>), String> {
     let mut first_list: Vec<u32> = Vec::with_capacity(data.len());
     let mut second_list: Vec<u32> = Vec::with_capacity(data.len());
 
@@ -43,7 +43,7 @@ fn read_input_into_lists(data: &Vec<String>) -> Result<(Vec<u32>, Vec<u32>), Str
 }
 
 // Split on entry into two values
-fn split_entry(s: &String) -> Result<(u32, u32), String> {
+fn split_entry(s: &str) -> Result<(u32, u32), String> {
     let parts: Vec<&str> = s.split("   ").collect();
 
     if parts.len() != 2 {
@@ -66,7 +66,6 @@ mod tests {
 
     #[test]
     fn test_day_1() {
-        // Wip
         let result =
             solve(&read_input_for_day(&1).expect("Expect the data file to be there.")).unwrap();
 

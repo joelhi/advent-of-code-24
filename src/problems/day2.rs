@@ -69,8 +69,11 @@ fn validate_sequence_with_dampening(sequence: &[i32]) -> bool {
     // Validate diffs
     let problematic = get_problematic_diffs(&diffs);
 
-    if !problematic.is_empty() {
-        // If the sequence has diffs causing problems, try to remove the entry before or after.
+    if problematic.is_empty(){
+        return true;
+    }
+    else if problematic.len() < 3 {
+        // If the sequence has diffs causing problems but is potentally solveable, try to remove the entry before or after.
         let mut valid_found = false;
         for problematic_diff in problematic {
             if validate_sequence_with_removed(sequence, problematic_diff.0)
@@ -83,7 +86,7 @@ fn validate_sequence_with_dampening(sequence: &[i32]) -> bool {
         return valid_found;
     }
 
-    true
+    false
 }
 
 // Find the diffs that are causing issues

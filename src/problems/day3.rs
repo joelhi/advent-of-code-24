@@ -1,9 +1,7 @@
 use regex::Regex;
 
 const OPERATION_PATTERN: &'static str = r"mul\(\d+,\d+\)";
-
 const DO_PATTERN: &'static str = r"do\(\)";
-
 const DONT_PATTERN: &'static str = r"don't\(\)";
 
 /// Solve the problem for day three, given the provided data.
@@ -89,7 +87,8 @@ fn find_operations_and_triggers(input_data: &str) -> Vec<&str> {
     // Define all relevant regex patterns
     let main_pattern =
         Regex::new(OPERATION_PATTERN).expect("Should be able to create the regex pattern.");
-    let do_pattern = Regex::new(DO_PATTERN).expect("Should be able to create the regex pattern.");
+    let do_pattern = 
+        Regex::new(DO_PATTERN).expect("Should be able to create the regex pattern.");
     let dont_pattern =
         Regex::new(DONT_PATTERN).expect("Should be able to create the regex pattern.");
 

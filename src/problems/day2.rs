@@ -57,7 +57,7 @@ fn validate_sequence(sequence: &[i32]) -> bool {
 
 // Check if the diff can be considered unsafe
 fn is_diff_unsafe(i: usize, diff: i32, prev_diff: i32) -> bool {
-    diff.abs() > 3 || diff.abs() < 1 || (i > 1 && prev_diff.signum() != diff.signum())
+    !(1..4).contains(&diff.abs()) || (i > 1 && prev_diff.signum() != diff.signum())
 }
 
 // Validate a sequence of numbers. Valid if all increasing or decreasing and max step <= 3, allowing one bad number in a sequence.
@@ -116,9 +116,9 @@ fn sort_increment_types(diffs: &[i32]) -> (Vec<DiffTuple>, Vec<DiffTuple>, Vec<D
     let (increases, decreases, invalid) = diffs.iter().enumerate().fold(
         (Vec::new(), Vec::new(), Vec::new()),
         |(mut inc, mut dec, mut inv), (i, &value)| {
-            if value > 0 && value < 4 {
+            if (1..4).contains(&value) {
                 inc.push((i, value));
-            } else if value < 0 && value > -4 {
+            } else if (-3..0).contains(&value) {
                 dec.push((i, value));
             } else {
                 inv.push((i, value));

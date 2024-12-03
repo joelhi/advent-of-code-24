@@ -24,7 +24,8 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
 
 // Filter the input data and find all valid operations
 fn find_valid_operations(input_data: &String) -> Vec<&str> {
-    let re = Regex::new(OPERATION_PATTERN).expect("Should be able to create a regex from the pattern.");
+    let re =
+        Regex::new(OPERATION_PATTERN).expect("Should be able to create a regex from the pattern.");
     let mut all_ops = Vec::new();
     all_ops.extend(re.find_iter(input_data).map(|m| m.as_str()));
 
@@ -41,7 +42,7 @@ fn execute_all_operations(ops: &[&str]) -> Result<u32, String> {
 }
 
 // Execute the enabled instruction based on the embedded trigger instructions
-fn execute_enabled_operations(instructions: &[&str]) -> Result<u32, String>{
+fn execute_enabled_operations(instructions: &[&str]) -> Result<u32, String> {
     let mut result = 0;
     let mut enabled = true;
     for &instruction in instructions {
@@ -49,7 +50,7 @@ fn execute_enabled_operations(instructions: &[&str]) -> Result<u32, String>{
             "don't()" => enabled = false,
             "do()" => enabled = true,
             &_ => {
-                if enabled{
+                if enabled {
                     result += execute_single_from_string(instruction)?;
                 }
             }
@@ -84,11 +85,13 @@ fn execute_single_from_string(operation: &str) -> Result<u32, String> {
 }
 
 // Find all the matches for either operations or do / don't triggers
-fn find_operations_and_triggers(input_data: &str)->Vec<&str>{
+fn find_operations_and_triggers(input_data: &str) -> Vec<&str> {
     // Define all relevant regex patterns
-    let main_pattern = Regex::new(OPERATION_PATTERN).expect("Should be able to create the regex pattern.");
+    let main_pattern =
+        Regex::new(OPERATION_PATTERN).expect("Should be able to create the regex pattern.");
     let do_pattern = Regex::new(DO_PATTERN).expect("Should be able to create the regex pattern.");
-    let dont_pattern = Regex::new(DONT_PATTERN).expect("Should be able to create the regex pattern.");
+    let dont_pattern =
+        Regex::new(DONT_PATTERN).expect("Should be able to create the regex pattern.");
 
     // Collect all matches
     let mut all_matches: Vec<(usize, &str)> = Vec::new();

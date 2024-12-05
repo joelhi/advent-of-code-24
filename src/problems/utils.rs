@@ -32,6 +32,6 @@ pub fn parse_pair_from_str<T: FromStr + Copy>(
             values.len()
         ));
     }
-    
+
     Ok((values[0], values[1]))
 }

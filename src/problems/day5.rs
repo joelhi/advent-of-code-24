@@ -14,6 +14,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         .map(|sequence| sequence[sequence.len() / 2])
         .sum();
 
+    // Solve part 2
     let result_part_2 = sequences
         .iter()
         .filter(|sequence| !validate_sequence(sequence, &order_rules))
@@ -29,21 +30,24 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
 /// Validate a sequence given the order rules
 fn validate_sequence(sequence: &[u32], order_rules: &HashMap<u32, Vec<u32>>) -> bool {
     for (index, &page) in sequence.iter().enumerate() {
-        if !can_come_after(page, sequence[..index].iter(), order_rules) {
+        if !sequence[..index]
+            .iter()
+            .all(|other_page| can_come_after(page, *other_page, order_rules))
+        {
             return false;
         }
     }
     true
 }
 
-/// Check if the current page can come after the other pages
-fn can_come_after<'a, I: IntoIterator<Item = &'a u32>>(
-    page: u32,
-    pages: I,
+/// Check if the current page can come after the other other
+fn can_come_after(
+    current_page: u32,
+    other_page: u32,
     order_rules: &HashMap<u32, Vec<u32>>,
 ) -> bool {
-    if let Some(rules) = order_rules.get(&page) {
-        !pages.into_iter().any(|prev_page| rules.contains(prev_page))
+    if let Some(rules) = order_rules.get(&current_page) {
+        !rules.contains(&other_page)
     } else {
         true
     }
@@ -73,7 +77,7 @@ fn find_next_valid(
 ) -> Result<u32, String> {
     for &page in remaining_pages.iter() {
         if remaining_pages.iter().all(|&other_page| {
-            other_page == page || can_come_after(other_page, [page].iter(), order_rules)
+            other_page == page || can_come_after(other_page, page, order_rules)
         }) {
             // Adding this page will not invalidate any remaining page
             return Ok(page);

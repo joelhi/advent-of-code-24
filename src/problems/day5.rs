@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 type ParsedInput = (HashMap<u32, Vec<u32>>, Vec<Vec<u32>>);
 
@@ -14,26 +14,76 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         .map(|sequence| sequence[sequence.len() / 2])
         .sum();
 
-    Ok(vec![result_part_1, 0])
+    let result_part_2 = sequences
+        .iter()
+        .filter(|sequence| !validate_sequence(sequence, &order_rules))
+        .map(|sequence| fix_sequence_order(sequence, &order_rules))
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .map(|sequence| sequence[sequence.len() / 2])
+        .sum();
+
+    Ok(vec![result_part_1, result_part_2])
 }
 
-// Validate a sequence given the order rules
+/// Validate a sequence given the order rules
 fn validate_sequence(sequence: &[u32], order_rules: &HashMap<u32, Vec<u32>>) -> bool {
     for (index, &page) in sequence.iter().enumerate() {
-        if let Some(rules) = order_rules.get(&page) {
-            // Check if any preceding page violates the rule
-            if sequence[..index]
-                .iter()
-                .any(|&prev_page| rules.contains(&prev_page))
-            {
-                return false;
-            }
+        if !can_come_after(page, sequence[..index].iter(), order_rules) {
+            return false;
         }
     }
     true
 }
 
-// Parse the input into separate data structures for the order pairs and the sequences
+/// Check if the current page can come after the other pages
+fn can_come_after<'a, I: IntoIterator<Item = &'a u32>>(
+    page: u32,
+    pages: I,
+    order_rules: &HashMap<u32, Vec<u32>>,
+) -> bool {
+    if let Some(rules) = order_rules.get(&page) {
+        !pages.into_iter().any(|prev_page| rules.contains(prev_page))
+    } else {
+        true
+    }
+}
+
+/// Correct the sequence order based on the rules
+fn fix_sequence_order(
+    sequence: &[u32],
+    order_rules: &HashMap<u32, Vec<u32>>,
+) -> Result<Vec<u32>, String> {
+    // Find valid locations for each page
+    let mut new_sequence = Vec::with_capacity(sequence.len());
+    let mut remaining_pages = HashSet::from_iter(sequence.iter().copied());
+    while !remaining_pages.is_empty() {
+        let next = find_next_valid(&remaining_pages, order_rules)?;
+        new_sequence.push(next);
+        remaining_pages.remove(&next);
+    }
+
+    Ok(new_sequence)
+}
+
+/// Return the next valid page in the original array
+fn find_next_valid(
+    remaining_pages: &HashSet<u32>,
+    order_rules: &HashMap<u32, Vec<u32>>,
+) -> Result<u32, String> {
+    for &page in remaining_pages.iter() {
+        if remaining_pages.iter().all(|&other_page| {
+            other_page == page || can_come_after(other_page, [page].iter(), order_rules)
+        }) {
+            // Adding this page will not invalidate any remaining page
+            return Ok(page);
+        }
+    }
+
+    Err("No valid order found".to_owned())
+}
+
+/// Parse the input into separate data structures for the order pairs and the sequences
 fn parse_input(input_data: &[String]) -> Result<ParsedInput, String> {
     let mut iter = input_data.split(|line| line.is_empty());
 
@@ -60,7 +110,7 @@ fn parse_input(input_data: &[String]) -> Result<ParsedInput, String> {
     Ok((order_rules, sequences))
 }
 
-// Parse the rows containing an ordering into two u32s
+/// Parse the rows containing an ordering into two u32s
 fn parse_order_pair_from_str(text: &str) -> Result<(u32, u32), String> {
     let parts = text.split("|").collect::<Vec<&str>>();
 
@@ -79,7 +129,7 @@ fn parse_order_pair_from_str(text: &str) -> Result<(u32, u32), String> {
     Ok((first_value, second_value))
 }
 
-// Parse a page sequence from a string of numbers
+/// Parse a page sequence from a string of numbers
 fn parse_page_sequence_from_str(text: &str) -> Result<Vec<u32>, String> {
     text.split(",")
         .map(|s| {
@@ -136,7 +186,16 @@ mod tests {
 
         let result = solve(&input_data).unwrap();
 
-        assert_eq!(143, result[0])
+        assert_eq!(
+            143, result[0],
+            "Example result for part 1 should be 143, but was {}",
+            result[0]
+        );
+        assert_eq!(
+            123, result[1],
+            "Example result for part 2 should be 123, but was {}",
+            result[1]
+        );
     }
 
     #[test]
@@ -145,5 +204,6 @@ mod tests {
             solve(&read_input_for_day(&5).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(5374, result[0]);
+        assert_eq!(4260, result[1]);
     }
 }

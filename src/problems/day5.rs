@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use crate::{parse_pair_from_str, parse_sequence_from_str};
+
 type ParsedInput = (HashMap<u32, Vec<u32>>, Vec<Vec<u32>>);
 
 /// Solve the problem for day five, given the provided data.
@@ -97,7 +99,7 @@ fn parse_input(input_data: &[String]) -> Result<ParsedInput, String> {
         .next()
         .unwrap_or(&[])
         .iter()
-        .map(|line| parse_order_pair_from_str(line))
+        .map(|line| parse_pair_from_str(line, "|"))
         .try_fold(HashMap::new(), |mut acc: HashMap<u32, Vec<u32>>, result| {
             let (key, value) = result?;
             acc.entry(key).or_default().push(value);
@@ -109,39 +111,10 @@ fn parse_input(input_data: &[String]) -> Result<ParsedInput, String> {
         .next()
         .unwrap_or(&[])
         .iter()
-        .map(|line| parse_page_sequence_from_str(line))
+        .map(|line| parse_sequence_from_str(line, ","))
         .collect::<Result<Vec<_>, _>>()?;
 
     Ok((order_rules, sequences))
-}
-
-/// Parse the rows containing an ordering into two u32s
-fn parse_order_pair_from_str(text: &str) -> Result<(u32, u32), String> {
-    let parts = text.split("|").collect::<Vec<&str>>();
-
-    if !parts.len() == 2 {
-        return Err(format!("Failed to parse order pair {}.", text));
-    }
-
-    let first_value = parts[0]
-        .parse::<u32>()
-        .or(Err(format!("Failed to parse {} into u32.", parts[0])))?;
-
-    let second_value = parts[1]
-        .parse::<u32>()
-        .or(Err(format!("Failed to parse {} into u32.", parts[1])))?;
-
-    Ok((first_value, second_value))
-}
-
-/// Parse a page sequence from a string of numbers
-fn parse_page_sequence_from_str(text: &str) -> Result<Vec<u32>, String> {
-    text.split(",")
-        .map(|s| {
-            s.parse::<u32>()
-                .or(Err(format!("Failed to parse {} into u32.", s)))
-        })
-        .collect()
 }
 
 #[cfg(test)]

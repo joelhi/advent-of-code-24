@@ -1,8 +1,8 @@
 use regex::Regex;
 
-const OPERATION_PATTERN: &'static str = r"mul\(\d+,\d+\)";
-const DO_PATTERN: &'static str = r"do\(\)";
-const DONT_PATTERN: &'static str = r"don't\(\)";
+const OPERATION_PATTERN: &str = r"mul\(\d+,\d+\)";
+const DO_PATTERN: &str = r"do\(\)";
+const DONT_PATTERN: &str = r"don't\(\)";
 
 /// Solve the problem for day three, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
@@ -21,7 +21,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
 }
 
 // Filter the input data and find all valid operations
-fn find_valid_operations(input_data: &String) -> Vec<&str> {
+fn find_valid_operations(input_data: &str) -> Vec<&str> {
     let re =
         Regex::new(OPERATION_PATTERN).expect("Should be able to create a regex from the pattern.");
     let mut all_ops = Vec::new();

@@ -76,9 +76,10 @@ fn find_next_valid(
     order_rules: &HashMap<u32, Vec<u32>>,
 ) -> Result<u32, String> {
     for &page in remaining_pages.iter() {
-        if remaining_pages.iter().all(|&other_page| {
-            other_page == page || can_come_after(other_page, page, order_rules)
-        }) {
+        if remaining_pages
+            .iter()
+            .all(|&other_page| other_page == page || can_come_after(other_page, page, order_rules))
+        {
             // Adding this page will not invalidate any remaining page
             return Ok(page);
         }

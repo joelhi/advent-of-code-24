@@ -1,9 +1,18 @@
+use crate::parse_sequence_from_str;
+
 // Alias for a difference between two values, given as the index and the size.
 type DiffTuple = (usize, i32);
 
 /// Solve the problem for day two, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
-    let input_sequences = parse_input_sequences(input_data)?;
+    // Parse inputs
+    let input_sequences = input_data
+        .iter()
+        .map(|line| {
+            parse_sequence_from_str(line, " ")
+                .map_err(|_| format!("Failed to parse {} into integers", line))
+        })
+        .collect::<Result<Vec<Vec<i32>>, String>>()?;
 
     // Part 1
     let num_safe_sequences: u32 = input_sequences
@@ -22,23 +31,6 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         .map_err(|_| "Value is too large to fit in u32")?;
 
     Ok(vec![num_safe_sequences, num_safe_sequences_with_dampening])
-}
-
-// Parse each row of values into a vec
-fn parse_input_sequences(input_data: &[String]) -> Result<Vec<Vec<i32>>, String> {
-    let mut all_sequences = Vec::with_capacity(input_data.len());
-    for line in input_data.iter() {
-        let values: Result<Vec<i32>, String> = line
-            .split(" ")
-            .map(|s| {
-                s.parse::<i32>()
-                    .map_err(|_| format!("Failed to convert '{}' to u32", s))
-            })
-            .collect();
-
-        all_sequences.push(values?);
-    }
-    Ok(all_sequences)
 }
 
 // Validate a sequence of numbers. Valid if all increasing or decreasing and max step <= 3.

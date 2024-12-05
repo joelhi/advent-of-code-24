@@ -40,7 +40,7 @@ fn validate_sequence(sequence: &[u32], order_rules: &HashMap<u32, Vec<u32>>) -> 
     true
 }
 
-/// Check if the current page can come after the other other
+/// Check if the current page can come after the other
 fn can_come_after(
     current_page: u32,
     other_page: u32,
@@ -70,7 +70,7 @@ fn fix_sequence_order(
     Ok(new_sequence)
 }
 
-/// Return the next valid page in the original array
+/// Return the next valid page from the available options
 fn find_next_valid(
     remaining_pages: &HashSet<u32>,
     order_rules: &HashMap<u32, Vec<u32>>,

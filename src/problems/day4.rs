@@ -1,4 +1,4 @@
-const PATTERN: &'static str = "MAS";
+const PATTERN: &str = "MAS";
 
 /// Solve the problem for day four, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
@@ -51,7 +51,7 @@ fn count_matches_at(i: usize, j: usize, data: &[String]) -> u32 {
         }
     }
 
-    return count;
+    count
 }
 
 /// Check if a location that contains X or S has a sequence that matches XMAS or SAMX.
@@ -152,7 +152,7 @@ fn increment_2d_index(
 
 /// Increment or decrement the unsigned index
 fn checked_add_increment(i: usize, increment: isize, factor: usize) -> Option<usize> {
-    let incr = (increment as isize).checked_mul(factor as isize)?;
+    let incr = increment.checked_mul(factor as isize)?;
     if incr < 0 {
         i.checked_sub((-incr) as usize)
     } else {

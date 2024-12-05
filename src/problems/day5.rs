@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+type ParsedInput = (HashMap<u32, Vec<u32>>, Vec<Vec<u32>>);
+
 /// Solve the problem for day five, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
     // Structure input data
@@ -32,7 +34,7 @@ fn validate_sequence(sequence: &[u32], order_rules: &HashMap<u32, Vec<u32>>) -> 
 }
 
 // Parse the input into separate data structures for the order pairs and the sequences
-fn parse_input(input_data: &[String]) -> Result<(HashMap<u32, Vec<u32>>, Vec<Vec<u32>>), String> {
+fn parse_input(input_data: &[String]) -> Result<ParsedInput, String> {
     let mut iter = input_data.split(|line| line.is_empty());
 
     // Parse the order pairs into a map
@@ -41,10 +43,10 @@ fn parse_input(input_data: &[String]) -> Result<(HashMap<u32, Vec<u32>>, Vec<Vec
         .unwrap_or(&[])
         .iter()
         .map(|line| parse_order_pair_from_str(line))
-        .try_fold(HashMap::new(), |mut acc, result| {
+        .try_fold(HashMap::new(), |mut acc: HashMap<u32, Vec<u32>>, result| {
             let (key, value) = result?;
-            acc.entry(key).or_insert_with(Vec::new).push(value);
-            Ok::<HashMap<_, Vec<_>>, String>(acc)
+            acc.entry(key).or_default().push(value);
+            Ok::<_, String>(acc)
         })?;
 
     // Parse the page sequences into vecs

@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::parse_pair_from_str;
+
 /// Solve the problem for day one, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
     let (mut first_list, mut second_list) = read_input_into_lists(input_data)?;
@@ -34,31 +36,12 @@ fn read_input_into_lists(data: &[String]) -> Result<(Vec<u32>, Vec<u32>), String
     let mut second_list: Vec<u32> = Vec::with_capacity(data.len());
 
     for s in data.iter() {
-        let (first_val, second_val) = split_entry(s)?;
+        let (first_val, second_val) = parse_pair_from_str::<u32>(s, "   ")?;
         first_list.push(first_val);
         second_list.push(second_val);
     }
 
     Ok((first_list, second_list))
-}
-
-// Split on entry into two values
-fn split_entry(s: &str) -> Result<(u32, u32), String> {
-    let parts: Vec<&str> = s.split("   ").collect();
-
-    if parts.len() != 2 {
-        return Err(format!("Failed to split data entry {} properly.", s));
-    }
-
-    let first_value = parts[0]
-        .parse::<u32>()
-        .or(Err(format!("Failed to parse {} into u32.", parts[0])))?;
-
-    let second_value = parts[1]
-        .parse::<u32>()
-        .or(Err(format!("Failed to parse {} into u32.", parts[1])))?;
-
-    Ok((first_value, second_value))
 }
 #[cfg(test)]
 mod tests {

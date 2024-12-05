@@ -9,7 +9,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
     let result_part_1 = sequences
         .iter()
         .filter(|sequence| validate_sequence(sequence, &order_rules))
-        .map(|sequence| sequence[sequence.len()/2])
+        .map(|sequence| sequence[sequence.len() / 2])
         .sum();
 
     Ok(vec![result_part_1, 0])
@@ -20,7 +20,10 @@ fn validate_sequence(sequence: &[u32], order_rules: &HashMap<u32, Vec<u32>>) -> 
     for (index, &page) in sequence.iter().enumerate() {
         if let Some(rules) = order_rules.get(&page) {
             // Check if any preceding page violates the rule
-            if sequence[..index].iter().any(|&prev_page| rules.contains(&prev_page)) {
+            if sequence[..index]
+                .iter()
+                .any(|&prev_page| rules.contains(&prev_page))
+            {
                 return false;
             }
         }
@@ -92,7 +95,7 @@ mod tests {
     use crate::read_input_for_day;
 
     #[test]
-    fn test_day_5_example(){
+    fn test_day_5_example() {
         let mut data = Vec::new();
 
         data.push("47|53");
@@ -124,7 +127,10 @@ mod tests {
         data.push("61,13,29");
         data.push("97,13,75,29,47");
 
-        let input_data = data.iter().map(|&s| String::from_str(s).unwrap()).collect::<Vec<String>>();
+        let input_data = data
+            .iter()
+            .map(|&s| String::from_str(s).unwrap())
+            .collect::<Vec<String>>();
 
         let result = solve(&input_data).unwrap();
 
@@ -140,29 +146,3 @@ mod tests {
         assert_eq!(0, result[1]);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -35,3 +35,40 @@ pub fn parse_pair_from_str<T: FromStr + Copy>(
 
     Ok((values[0], values[1]))
 }
+
+/// Get the character at a 2d index location from the slice of strings.
+pub fn get_char(data: &[String], i: usize, j: usize) -> Option<char> {
+    let row = data.get(i)?;
+    let bytes = row.as_bytes();
+
+    if !row.is_char_boundary(j) {
+        return None;
+    }
+
+    let ch = std::str::from_utf8(&bytes[j..]).ok()?.chars().next()?;
+    Some(ch)
+}
+
+/// Increment the i and j indexes with the increment. Return None if any is invalid.
+pub fn increment_2d_index(
+    i: usize,
+    j: usize,
+    increment_i: isize,
+    increment_j: isize,
+    factor: usize,
+) -> Option<(usize, usize)> {
+    let i = checked_add_increment(i, increment_i, factor)?;
+    let j = checked_add_increment(j, increment_j, factor)?;
+
+    Some((i, j))
+}
+
+/// Increment or decrement the unsigned index
+pub fn checked_add_increment(i: usize, increment: isize, factor: usize) -> Option<usize> {
+    let incr = increment.checked_mul(factor as isize)?;
+    if incr < 0 {
+        i.checked_sub((-incr) as usize)
+    } else {
+        i.checked_add(incr as usize)
+    }
+}

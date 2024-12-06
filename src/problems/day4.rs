@@ -1,3 +1,5 @@
+use super::utils;
+
 const PATTERN: &str = "MAS";
 
 /// Solve the problem for day four, given the provided data.
@@ -36,7 +38,7 @@ fn count_all_xmas_cross(data: &[String]) -> u32 {
 
 /// Check for matches starting at a certain index
 fn count_matches_at(i: usize, j: usize, data: &[String]) -> u32 {
-    let char = get_char(data, i, j);
+    let char = utils::get_char(data, i, j);
     let mut count = 0;
     if let Some(char) = char {
         if char == 'X' {
@@ -63,7 +65,7 @@ fn find_sequence_match_at(
     data: &[String],
 ) -> u32 {
     for (index, c) in PATTERN.chars().enumerate() {
-        let (i, j) = match increment_2d_index(i, j, increment_i, increment_j, index + 1) {
+        let (i, j) = match utils::increment_2d_index(i, j, increment_i, increment_j, index + 1) {
             Some(value) => value,
             None => return 0,
         };
@@ -93,13 +95,13 @@ fn check_adjacent_for_cross(i: usize, j: usize, data: &[String]) -> bool {
 /// Check the diagonals of a cross, to check is they match the M*S or S*M pattern
 fn check_diagonal(i: usize, j: usize, data: &[String], up: bool) -> bool {
     let incr_i_1 = if up { -1 } else { 1 };
-    let (i_1, j_1) = match increment_2d_index(i, j, incr_i_1, -1, 1) {
+    let (i_1, j_1) = match utils::increment_2d_index(i, j, incr_i_1, -1, 1) {
         Some(value) => value,
         None => return false,
     };
 
     let incr_i_2 = if up { 1 } else { -1 };
-    let (i_2, j_2) = match increment_2d_index(i, j, incr_i_2, 1, 1) {
+    let (i_2, j_2) = match utils::increment_2d_index(i, j, incr_i_2, 1, 1) {
         Some(value) => value,
         None => return false,
     };
@@ -115,49 +117,12 @@ fn check_diagonal(i: usize, j: usize, data: &[String], up: bool) -> bool {
 
 /// Check if the location at index i, j matches a certain char
 fn is_location_matching(i: usize, j: usize, data: &[String], ref_char: char) -> bool {
-    if let Some(char) = get_char(data, i, j) {
+    if let Some(char) = utils::get_char(data, i, j) {
         if char == ref_char {
             return true;
         }
     }
     false
-}
-
-/// Get the character at a 2d index location from the slice of strings.
-fn get_char(data: &[String], i: usize, j: usize) -> Option<char> {
-    let row = data.get(i)?;
-    let bytes = row.as_bytes();
-
-    if !row.is_char_boundary(j) {
-        return None;
-    }
-
-    let ch = std::str::from_utf8(&bytes[j..]).ok()?.chars().next()?;
-    Some(ch)
-}
-
-/// Increment the i and j indexes with the increment. Return None if any is invalid.
-fn increment_2d_index(
-    i: usize,
-    j: usize,
-    increment_i: isize,
-    increment_j: isize,
-    factor: usize,
-) -> Option<(usize, usize)> {
-    let i = checked_add_increment(i, increment_i, factor)?;
-    let j = checked_add_increment(j, increment_j, factor)?;
-
-    Some((i, j))
-}
-
-/// Increment or decrement the unsigned index
-fn checked_add_increment(i: usize, increment: isize, factor: usize) -> Option<usize> {
-    let incr = increment.checked_mul(factor as isize)?;
-    if incr < 0 {
-        i.checked_sub((-incr) as usize)
-    } else {
-        i.checked_add(incr as usize)
-    }
 }
 
 #[cfg(test)]

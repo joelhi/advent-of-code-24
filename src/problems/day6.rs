@@ -16,15 +16,15 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
 
 /// Solve part 1
 fn solve_part_1(input_data: &[String]) -> Result<u32, String> {
-    let mut guard_data= Some(find_guard_loc_and_dir(input_data)?);
+    let mut guard_data = Some(find_guard_loc_and_dir(input_data)?);
     let mut visited = HashSet::new();
     let mut breaker = 0;
     while let Some(valid_guard) = guard_data {
         visited.insert((valid_guard.0, valid_guard.1));
         println!("{}:{},{}", breaker, valid_guard.0, valid_guard.1);
         guard_data = update_loc_and_dir(valid_guard, input_data)?;
-        breaker+=1;
-        if breaker == MAX_STEPS{
+        breaker += 1;
+        if breaker == MAX_STEPS {
             break;
         }
     }
@@ -33,64 +33,72 @@ fn solve_part_1(input_data: &[String]) -> Result<u32, String> {
 }
 
 /// Draw the visited position
-fn trace(input_data: &[String], path: &HashSet<(usize, usize)>){
-    let mut data_copy = input_data.iter().map(|s| s.clone()).collect::<Vec<String>>();
+fn trace(input_data: &[String], path: &HashSet<(usize, usize)>) {
+    let mut data_copy = input_data
+        .iter()
+        .map(|s| s.clone())
+        .collect::<Vec<String>>();
 
-    for (i, j) in path{
-        data_copy[*i].replace_range(*j..*j+1, "x");
+    for (i, j) in path {
+        data_copy[*i].replace_range(*j..*j + 1, "x");
     }
 
-    for line in data_copy{
+    for line in data_copy {
         println!("{}", line);
     }
 }
 
 /// Update the position and direction based on the guards movement.
-fn update_loc_and_dir(guard_data: GuardData, input_data: &[String]) -> Result<Option<GuardData>, String> {
+fn update_loc_and_dir(
+    guard_data: GuardData,
+    input_data: &[String],
+) -> Result<Option<GuardData>, String> {
     let (i, j, v_i, v_j) = guard_data;
     if let Some((i_new, j_new)) =
         utils::increment_2d_index(guard_data.0, guard_data.1, guard_data.2, guard_data.3, 1)
     {
-        if let Some(hit) = has_hit_obstacle(i_new, j_new, input_data){
-            if hit{
+        if let Some(hit) = has_hit_obstacle(i_new, j_new, input_data) {
+            if hit {
                 // Hits obstacle, try again from original spot with updated direction
                 let (v_i, v_j) = rotate_dir(v_i, v_j)?;
                 return update_loc_and_dir((i, j, v_i, v_j), input_data);
-            }else{
+            } else {
                 // Clear path
                 return Ok(Some((i_new, j_new, v_i, v_j)));
             }
-        }else{
+        } else {
             // No valid position at new, overflow
-            return Ok(None)
+            return Ok(None);
         }
     }
-    
+
     // Underflow, no valid position
     Ok(None)
 }
 
 /// Rotate the direction clockwise
-fn rotate_dir(v_i: isize, v_j: isize)->Result<(isize, isize), String>{
-    if v_i < 0{
+fn rotate_dir(v_i: isize, v_j: isize) -> Result<(isize, isize), String> {
+    if v_i < 0 {
         return Ok((0, 1));
-    }else if v_i > 0{
+    } else if v_i > 0 {
         return Ok((0, -1));
-    }else if v_j < 0 {
+    } else if v_j < 0 {
         return Ok((-1, 0));
-    }else if v_j > 0 {
+    } else if v_j > 0 {
         return Ok((1, 0));
     }
 
-    Err(format!("Cannot rotate direction {},{} as it's not valid.", v_i, v_j))
+    Err(format!(
+        "Cannot rotate direction {},{} as it's not valid.",
+        v_i, v_j
+    ))
 }
 
 /// Check if the current position has an obstacle
-fn has_hit_obstacle(i: usize, j: usize, input_data: &[String])->Option<bool>{
+fn has_hit_obstacle(i: usize, j: usize, input_data: &[String]) -> Option<bool> {
     if let Some(char) = utils::get_char(input_data, i, j) {
         Some(char == '#')
-    }
-    else{
+    } else {
         None
     }
 }
@@ -151,13 +159,3 @@ mod tests {
         assert_eq!(0, result[1]);
     }
 }
-
-
-
-
-
-
-
-
-
-

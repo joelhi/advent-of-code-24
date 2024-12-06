@@ -38,14 +38,24 @@ fn solve_part_1(
     limits: Vec2u,
 ) -> Result<u32, String> {
     let mut current_state = original_state;
-    let mut unique_pos: HashSet<Vec2u> = HashSet::new();
-    unique_pos.insert(original_state.0);
+    let mut unique_states: HashSet<(Vec2u, Vec2i)> = HashSet::new();
+    unique_states.insert(original_state);
     while let Some(next_state) = update_state(current_state, obstacles, limits) {
-        unique_pos.insert(next_state.0);
+        if !unique_states.insert(next_state) {
+            return Err(format!(
+                "Entered infinite loop. State ({},{}),({},{}) has already happened.",
+                next_state.0 .0, next_state.0 .1, next_state.1 .0, next_state.1 .1
+            ));
+        }
         current_state = next_state;
     }
 
-    Ok(unique_pos.len() as u32)
+    // Find all unique positions
+    Ok(unique_states
+        .iter()
+        .map(|(pos, _)| *pos)
+        .collect::<HashSet<Vec2u>>()
+        .len() as u32)
 }
 
 /// Update the position and direction based on the guards movement.

@@ -48,11 +48,9 @@ fn can_come_after(
     other_page: u32,
     order_rules: &HashMap<u32, Vec<u32>>,
 ) -> bool {
-    if let Some(rules) = order_rules.get(&current_page) {
-        !rules.contains(&other_page)
-    } else {
-        true
-    }
+    order_rules
+        .get(&current_page)
+        .map_or(true, |rules| !rules.contains(&other_page))
 }
 
 /// Correct the sequence order based on the rules

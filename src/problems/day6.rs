@@ -2,98 +2,99 @@ use std::collections::HashSet;
 
 use super::utils;
 
-type GuardData = (usize, usize, isize, isize);
-
-/// Safety switch for the while loop
-const MAX_STEPS: usize = 100000;
+// Unsigned 2d coord
+type Vec2u = (usize, usize);
+// Signed 2d coord
+type Vec2i = (isize, isize);
 
 /// Solve the problem for day six, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
-    let result_part_1 = solve_part_1(input_data)?;
+    // Find all obstacles
+    let obstacles: HashSet<Vec2u> = input_data
+        .iter()
+        .enumerate()
+        .flat_map(|(i, row)| {
+            row.chars()
+                .enumerate()
+                .filter(|&(_, char)| char == '#')
+                .map(move |(j, _)| (i, j))
+        })
+        .collect();
+
+    // Part 1
+    let result_part_1 = solve_part_1(
+        find_guard_pos_and_dir(&input_data)?,
+        &obstacles,
+        (input_data.len(), input_data[0].len()),
+    )?;
 
     Ok(vec![result_part_1, 0])
 }
 
 /// Solve part 1
-fn solve_part_1(input_data: &[String]) -> Result<u32, String> {
-    let mut guard_data = Some(find_guard_loc_and_dir(input_data)?);
-    let mut visited = HashSet::new();
-    let mut breaker = 0;
-    while let Some(valid_guard) = guard_data {
-        visited.insert((valid_guard.0, valid_guard.1));
-        println!("{}:{},{}", breaker, valid_guard.0, valid_guard.1);
-        guard_data = update_loc_and_dir(valid_guard, input_data)?;
-        breaker += 1;
-        if breaker == MAX_STEPS {
-            break;
-        }
+fn solve_part_1(
+    original_state: (Vec2u, Vec2i),
+    obstacles: &HashSet<Vec2u>,
+    limits: Vec2u,
+) -> Result<u32, String> {
+    let mut current_state = original_state;
+    let mut unique_pos: HashSet<Vec2u> = HashSet::new();
+    unique_pos.insert(original_state.0);
+    while let Some(next_state) = update_state(current_state, obstacles, limits) {
+        unique_pos.insert(next_state.0);
+        current_state = next_state;
     }
 
-    Ok(visited.len() as u32)
+    Ok(unique_pos.len() as u32)
 }
 
 /// Update the position and direction based on the guards movement.
-fn update_loc_and_dir(
-    guard_data: GuardData,
-    input_data: &[String],
-) -> Result<Option<GuardData>, String> {
-    let (i, j, v_i, v_j) = guard_data;
-    if let Some((i_new, j_new)) =
-        utils::increment_2d_index(guard_data.0, guard_data.1, guard_data.2, guard_data.3, 1)
-    {
-        if let Some(hit) = has_hit_obstacle(i_new, j_new, input_data) {
-            if hit {
-                // Hits obstacle, try again from original spot with updated direction
-                let (v_i, v_j) = rotate_dir(v_i, v_j)?;
-                return update_loc_and_dir((i, j, v_i, v_j), input_data);
-            } else {
-                // Clear path
-                return Ok(Some((i_new, j_new, v_i, v_j)));
-            }
-        } else {
-            // No valid position at new, overflow
-            return Ok(None);
+fn update_state(
+    state: (Vec2u, Vec2i),
+    obstacles: &HashSet<Vec2u>,
+    limits: Vec2u,
+) -> Option<(Vec2u, Vec2i)> {
+    let ((i, j), (v_i, v_j)) = state;
+    if let Some(pos) = utils::increment_2d_index(i, j, v_i, v_j, 1) {
+        if obstacles.contains(&pos) {
+            let (v_i, v_j) = update_dir((v_i, v_j))?;
+            return update_state(((i, j), (v_i, v_j)), obstacles, limits);
+        } else if pos.0 < limits.0 && pos.1 < limits.1 {
+            return Some((pos, (v_i, v_j)));
         }
     }
 
-    // Underflow, no valid position
-    Ok(None)
+    // no valid position
+    None
 }
 
 /// Rotate the direction clockwise
-fn rotate_dir(v_i: isize, v_j: isize) -> Result<(isize, isize), String> {
+fn update_dir(v: Vec2i) -> Option<Vec2i> {
+    let (v_i, v_j) = v;
     if v_i < 0 {
-        return Ok((0, 1));
+        Some((0, 1))
     } else if v_i > 0 {
-        return Ok((0, -1));
+        Some((0, -1))
     } else if v_j < 0 {
-        return Ok((-1, 0));
+        Some((-1, 0))
     } else if v_j > 0 {
-        return Ok((1, 0));
+        Some((1, 0))
+    } else {
+        None
     }
-
-    Err(format!(
-        "Cannot rotate direction {},{} as it's not valid.",
-        v_i, v_j
-    ))
-}
-
-/// Check if the current position has an obstacle
-fn has_hit_obstacle(i: usize, j: usize, input_data: &[String]) -> Option<bool> {
-    utils::get_char(input_data, i, j).map(|char| char == '#')
 }
 
 /// Find the location and direction of travel for the guard in the data.
-fn find_guard_loc_and_dir(input_data: &[String]) -> Result<GuardData, String> {
+fn find_guard_pos_and_dir(input_data: &[String]) -> Result<(Vec2u, Vec2i), String> {
     for (i, s) in input_data.iter().enumerate() {
         if let Some(j) = s.find(">") {
-            return Ok((i, j, 0, 1));
+            return Ok(((i, j), (0, 1)));
         } else if let Some(j) = s.find("^") {
-            return Ok((i, j, -1, 0));
+            return Ok(((i, j), (-1, 0)));
         } else if let Some(j) = s.find("<") {
-            return Ok((i, j, 0, -1));
+            return Ok(((i, j), (0, -1)));
         } else if let Some(j) = s.find("v") {
-            return Ok((i, j, -1, 0));
+            return Ok(((i, j), (-1, 0)));
         }
     }
     Err("Not valid guard found.".to_owned())
@@ -125,7 +126,7 @@ mod tests {
         let result = solve(&data).unwrap();
         assert_eq!(
             41, result[0],
-            "Result for part 1 example should be 18 but was {}",
+            "Result for part 1 example should be 41 but was {}",
             result[0]
         );
     }

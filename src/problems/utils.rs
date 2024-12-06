@@ -72,3 +72,26 @@ pub fn checked_add_increment(i: usize, increment: isize, factor: usize) -> Optio
         i.checked_add(incr as usize)
     }
 }
+
+/// Transposes a grid of chars represented as a list of Strings.
+pub fn transpose_text_data(data: &[String]) -> Result<Vec<String>, String> {
+    if data.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    let num_cols = data[0].len();
+    let mut transposed = Vec::with_capacity(num_cols);
+
+    for i in 0..num_cols {
+        let mut new_row = String::with_capacity(data.len());
+        for j in 0..data.len() {
+            new_row.push(
+                get_char(data, i, j)
+                    .ok_or(format!("Failed to get char from string at {},{}", i, j))?,
+            );
+        }
+        transposed.push(new_row);
+    }
+
+    Ok(transposed)
+}

@@ -32,22 +32,6 @@ fn solve_part_1(input_data: &[String]) -> Result<u32, String> {
     Ok(visited.len() as u32)
 }
 
-/// Draw the visited position
-fn trace(input_data: &[String], path: &HashSet<(usize, usize)>) {
-    let mut data_copy = input_data
-        .iter()
-        .map(|s| s.clone())
-        .collect::<Vec<String>>();
-
-    for (i, j) in path {
-        data_copy[*i].replace_range(*j..*j + 1, "x");
-    }
-
-    for line in data_copy {
-        println!("{}", line);
-    }
-}
-
 /// Update the position and direction based on the guards movement.
 fn update_loc_and_dir(
     guard_data: GuardData,
@@ -96,11 +80,7 @@ fn rotate_dir(v_i: isize, v_j: isize) -> Result<(isize, isize), String> {
 
 /// Check if the current position has an obstacle
 fn has_hit_obstacle(i: usize, j: usize, input_data: &[String]) -> Option<bool> {
-    if let Some(char) = utils::get_char(input_data, i, j) {
-        Some(char == '#')
-    } else {
-        None
-    }
+    utils::get_char(input_data, i, j).map(|char| char == '#')
 }
 
 /// Find the location and direction of travel for the guard in the data.

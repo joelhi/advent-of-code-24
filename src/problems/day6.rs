@@ -1,4 +1,6 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
+
+use crate::increment_2d_index;
 
 use super::utils;
 
@@ -10,7 +12,7 @@ type Vec2i = (isize, isize);
 /// Solve the problem for day six, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
     // Find all obstacles
-    let obstacles: HashSet<Vec2u> = input_data
+    let mut obstacles: HashSet<Vec2u> = input_data
         .iter()
         .enumerate()
         .flat_map(|(i, row)| {
@@ -21,14 +23,17 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         })
         .collect();
 
-    // Part 1
-    let result_part_1 = solve_part_1(
-        find_guard_pos_and_dir(&input_data)?,
-        &obstacles,
-        (input_data.len(), input_data[0].len()),
-    )?;
+    let original_state = find_guard_pos_and_dir(&input_data)?;
+    let limits = (input_data.len(), input_data[0].len());
 
-    Ok(vec![result_part_1, 0])
+    // Part 1
+    let all_states =
+        solve_part_1(original_state, &obstacles, limits).expect("Part one should be solveable.");
+
+    // Part 2
+    let result_part_2 = solve_part_2(&all_states, &mut obstacles, limits);
+
+    Ok(vec![all_states.keys().len() as u32, result_part_2])
 }
 
 /// Solve part 1
@@ -36,26 +41,53 @@ fn solve_part_1(
     original_state: (Vec2u, Vec2i),
     obstacles: &HashSet<Vec2u>,
     limits: Vec2u,
-) -> Result<u32, String> {
+) -> Option<HashMap<Vec2u, Vec<Vec2i>>> {
     let mut current_state = original_state;
-    let mut unique_states: HashSet<(Vec2u, Vec2i)> = HashSet::new();
-    unique_states.insert(original_state);
+    let mut previous_states: HashMap<Vec2u, Vec<Vec2i>> = HashMap::new();
+    previous_states.insert(original_state.0, vec![original_state.1]);
     while let Some(next_state) = update_state(current_state, obstacles, limits) {
-        if !unique_states.insert(next_state) {
-            return Err(format!(
-                "Entered infinite loop. State ({},{}),({},{}) has already happened.",
-                next_state.0 .0, next_state.0 .1, next_state.1 .0, next_state.1 .1
-            ));
+        if !add_state(&next_state, &mut previous_states){
+            return None;
         }
         current_state = next_state;
     }
 
     // Find all unique positions
-    Ok(unique_states
-        .iter()
-        .map(|(pos, _)| *pos)
-        .collect::<HashSet<Vec2u>>()
-        .len() as u32)
+    Some(previous_states)
+}
+
+/// Add the state to the list if not a duplicate
+fn add_state(state: &(Vec2u, Vec2i), previous_states: &mut HashMap<Vec2u, Vec<Vec2i>>)->bool{
+    let dirs = previous_states.entry(state.0).or_insert(Vec::with_capacity(8));
+    
+    if !dirs.contains(&state.1){
+        dirs.push(state.1);
+        true
+    }else{
+        false
+    }
+}
+
+/// Solve part 2
+fn solve_part_2(
+    all_states: &HashMap<Vec2u, Vec<Vec2i>>,
+    obstacles: &mut HashSet<Vec2u>,
+    limits: Vec2u,
+) -> u32 {
+    // Put obstacle on all visited pos, check if path is broken
+    let mut count = 0;
+    for (&(i, j), dirs) in all_states.iter() {
+        obstacles.insert((i, j));
+        let (v_i, v_j) = dirs[0];
+        let prev_pos = increment_2d_index(i, j, -v_i, -v_j, 1).unwrap();
+        match solve_part_1((prev_pos, (v_i, v_j)), obstacles, limits) {
+            Some(_) => (),
+            None => {count+=1;},
+        };
+        obstacles.remove(&(i, j));
+    }
+
+    count
 }
 
 /// Update the position and direction based on the guards movement.
@@ -147,6 +179,6 @@ mod tests {
             solve(&read_input_for_day(&6).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(5080, result[0]);
-        assert_eq!(0, result[1]);
+        assert_eq!(1919, result[1]);
     }
 }

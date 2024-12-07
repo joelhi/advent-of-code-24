@@ -23,7 +23,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         })
         .collect();
 
-    let original_state = find_guard_pos_and_dir(&input_data)?;
+    let original_state = find_guard_pos_and_dir(input_data)?;
     let limits = (input_data.len(), input_data[0].len());
 
     // Part 1

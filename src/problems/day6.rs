@@ -46,7 +46,7 @@ fn solve_part_1(
     let mut previous_states: HashMap<Vec2u, Vec<Vec2i>> = HashMap::new();
     previous_states.insert(original_state.0, vec![original_state.1]);
     while let Some(next_state) = update_state(current_state, obstacles, limits) {
-        if !add_state(&next_state, &mut previous_states){
+        if !add_state(&next_state, &mut previous_states) {
             return None;
         }
         current_state = next_state;
@@ -57,13 +57,15 @@ fn solve_part_1(
 }
 
 /// Add the state to the list if not a duplicate
-fn add_state(state: &(Vec2u, Vec2i), previous_states: &mut HashMap<Vec2u, Vec<Vec2i>>)->bool{
-    let dirs = previous_states.entry(state.0).or_insert(Vec::with_capacity(8));
-    
-    if !dirs.contains(&state.1){
+fn add_state(state: &(Vec2u, Vec2i), previous_states: &mut HashMap<Vec2u, Vec<Vec2i>>) -> bool {
+    let dirs = previous_states
+        .entry(state.0)
+        .or_insert(Vec::with_capacity(8));
+
+    if !dirs.contains(&state.1) {
         dirs.push(state.1);
         true
-    }else{
+    } else {
         false
     }
 }
@@ -82,7 +84,9 @@ fn solve_part_2(
         let prev_pos = increment_2d_index(i, j, -v_i, -v_j, 1).unwrap();
         match solve_part_1((prev_pos, (v_i, v_j)), obstacles, limits) {
             Some(_) => (),
-            None => {count+=1;},
+            None => {
+                count += 1;
+            }
         };
         obstacles.remove(&(i, j));
     }

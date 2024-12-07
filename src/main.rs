@@ -1,12 +1,14 @@
 pub mod problems;
 
+use std::time::Instant;
+
 use problems::utils::*;
 use problems::*;
 
 fn main() {
     let args = std::env::args().collect::<Vec<String>>();
     let day = &args[1].parse::<i32>().unwrap();
-
+    let before = Instant::now();
     println!("Running day {}", day);
     match solve_day(day) {
         Ok(result) => {
@@ -14,6 +16,7 @@ fn main() {
             for (i, val) in result.iter().enumerate() {
                 println!("{}: {}", i, val);
             }
+            println!("Solution completed in {:2}ms", before.elapsed().as_millis())
         }
         Err(err) => println!("Failed with error: {}", err),
     }

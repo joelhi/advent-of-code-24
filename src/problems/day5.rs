@@ -5,7 +5,7 @@ use crate::{parse_pair_from_str, parse_sequence_from_str};
 type ParsedInput = (HashMap<u32, Vec<u32>>, Vec<Vec<u32>>);
 
 /// Solve the problem for day five, given the provided data.
-pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
+pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     // Structure input data
     let (order_rules, sequences) = parse_input(input_data)?;
 
@@ -13,7 +13,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
     let result_part_1 = sequences
         .iter()
         .filter(|sequence| validate_sequence(sequence, &order_rules))
-        .map(|sequence| sequence[sequence.len() / 2])
+        .map(|sequence| sequence[sequence.len() / 2] as u64)
         .sum();
 
     // Solve part 2
@@ -23,7 +23,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         .map(|sequence| fix_sequence_order(sequence, &order_rules))
         .collect::<Result<Vec<_>, _>>()?
         .into_iter()
-        .map(|sequence| sequence[sequence.len() / 2])
+        .map(|sequence| sequence[sequence.len() / 2] as u64)
         .sum();
 
     Ok(vec![result_part_1, result_part_2])

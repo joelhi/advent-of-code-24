@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::parse_pair_from_str;
 
 /// Solve the problem for day one, given the provided data.
-pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
+pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (mut first_list, mut second_list) = read_input_into_lists(input_data)?;
 
     // Part 1
@@ -27,7 +27,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         answer_part_2 += num * num_matches;
     }
 
-    Ok(vec![answer_part_1, answer_part_2])
+    Ok(vec![answer_part_1 as u64, answer_part_2 as u64])
 }
 
 // Parse the text data into two lists of u32s.

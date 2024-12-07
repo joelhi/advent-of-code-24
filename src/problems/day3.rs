@@ -5,7 +5,7 @@ const DO_PATTERN: &str = r"do\(\)";
 const DONT_PATTERN: &str = r"don't\(\)";
 
 /// Solve the problem for day three, given the provided data.
-pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
+pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     // Merge rows into single string
     let full_data = input_data.join("");
 
@@ -31,7 +31,7 @@ fn find_valid_operations(input_data: &str) -> Vec<&str> {
 }
 
 // Execute a list of operations defined as &str
-fn execute_all_operations(ops: &[&str]) -> Result<u32, String> {
+fn execute_all_operations(ops: &[&str]) -> Result<u64, String> {
     let mut result = 0;
     for operation in ops {
         result += execute_single_from_string(operation)?;
@@ -40,7 +40,7 @@ fn execute_all_operations(ops: &[&str]) -> Result<u32, String> {
 }
 
 // Execute the enabled instruction based on the embedded trigger instructions
-fn execute_enabled_operations(instructions: &[&str]) -> Result<u32, String> {
+fn execute_enabled_operations(instructions: &[&str]) -> Result<u64, String> {
     let mut result = 0;
     let mut enabled = true;
     for &instruction in instructions {
@@ -58,7 +58,7 @@ fn execute_enabled_operations(instructions: &[&str]) -> Result<u32, String> {
 }
 
 // Parse a single operation from text format into the values and compute the result
-fn execute_single_from_string(operation: &str) -> Result<u32, String> {
+fn execute_single_from_string(operation: &str) -> Result<u64, String> {
     // Extract the parenthesis bit
     let operation_values = &operation[3..];
     let split: Vec<&str> = operation_values.split(",").collect();
@@ -72,11 +72,11 @@ fn execute_single_from_string(operation: &str) -> Result<u32, String> {
 
     // Parse the strings into integers
     let first_number = split[0][1..]
-        .parse::<u32>()
+        .parse::<u64>()
         .map_err(|_| format!("Failed to parse {} as u32.", split[0]))?;
 
     let second_number = &split[1][..split[1].len() - 1]
-        .parse::<u32>()
+        .parse::<u64>()
         .map_err(|_| format!("Failed to parse {} as u32.", split[0]))?;
 
     Ok(first_number * second_number)

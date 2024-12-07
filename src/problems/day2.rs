@@ -4,7 +4,7 @@ use crate::parse_sequence_from_str;
 type DiffTuple = (usize, i32);
 
 /// Solve the problem for day two, given the provided data.
-pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
+pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     // Parse inputs
     let input_sequences = input_data
         .iter()
@@ -15,7 +15,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         .collect::<Result<Vec<Vec<i32>>, String>>()?;
 
     // Part 1
-    let num_safe_sequences: u32 = input_sequences
+    let num_safe_sequences: u64 = input_sequences
         .iter()
         .filter(|sequence| validate_sequence(sequence))
         .count()
@@ -23,7 +23,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
         .map_err(|_| "Value is too large to fit in u32")?;
 
     // Part 2
-    let num_safe_sequences_with_dampening: u32 = input_sequences
+    let num_safe_sequences_with_dampening: u64 = input_sequences
         .iter()
         .filter(|sequence| validate_sequence_with_dampening(sequence))
         .count()

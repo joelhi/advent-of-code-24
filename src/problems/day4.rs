@@ -3,7 +3,7 @@ use super::utils;
 const PATTERN: &str = "MAS";
 
 /// Solve the problem for day four, given the provided data.
-pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
+pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let result_part_1 = count_all_xmas_seq(input_data);
     let result_part_2 = count_all_xmas_cross(input_data);
 
@@ -11,7 +11,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
 }
 
 /// Count all backwards and forwards instances of *XMAS*
-fn count_all_xmas_seq(data: &[String]) -> u32 {
+fn count_all_xmas_seq(data: &[String]) -> u64 {
     let mut count = 0;
     for i in 0..data.len() {
         for j in 0..data[i].len() {
@@ -23,7 +23,7 @@ fn count_all_xmas_seq(data: &[String]) -> u32 {
 }
 
 /// Count all locations with a MAS cross
-fn count_all_xmas_cross(data: &[String]) -> u32 {
+fn count_all_xmas_cross(data: &[String]) -> u64 {
     let mut count = 0;
     for i in 0..data.len() {
         for j in 0..data[i].len() {
@@ -37,7 +37,7 @@ fn count_all_xmas_cross(data: &[String]) -> u32 {
 }
 
 /// Check for matches starting at a certain index
-fn count_matches_at(i: usize, j: usize, data: &[String]) -> u32 {
+fn count_matches_at(i: usize, j: usize, data: &[String]) -> u64 {
     let char = utils::get_char(data, i, j);
     let mut count = 0;
     if let Some(char) = char {
@@ -63,7 +63,7 @@ fn find_sequence_match_at(
     increment_i: isize,
     increment_j: isize,
     data: &[String],
-) -> u32 {
+) -> u64 {
     for (index, c) in PATTERN.chars().enumerate() {
         let (i, j) = match utils::increment_2d_index(i, j, increment_i, increment_j, index + 1) {
             Some(value) => value,

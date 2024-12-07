@@ -10,7 +10,7 @@ type Vec2u = (usize, usize);
 type Vec2i = (isize, isize);
 
 /// Solve the problem for day six, given the provided data.
-pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
+pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     // Find all obstacles
     let mut obstacles: HashSet<Vec2u> = input_data
         .iter()
@@ -33,7 +33,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u32>, String> {
     // Part 2
     let result_part_2 = solve_part_2(&all_states, &mut obstacles, limits);
 
-    Ok(vec![all_states.keys().len() as u32, result_part_2])
+    Ok(vec![all_states.keys().len() as u64, result_part_2])
 }
 
 /// Solve part 1
@@ -75,7 +75,7 @@ fn solve_part_2(
     all_states: &HashMap<Vec2u, Vec<Vec2i>>,
     obstacles: &mut HashSet<Vec2u>,
     limits: Vec2u,
-) -> u32 {
+) -> u64 {
     // Put obstacle on all visited pos, check if path is broken
     let mut count = 0;
     for (&(i, j), dirs) in all_states.iter() {
@@ -174,6 +174,11 @@ mod tests {
             41, result[0],
             "Result for part 1 example should be 41 but was {}",
             result[0]
+        );
+        assert_eq!(
+            6, result[1],
+            "Result for part 2 example should be 6 but was {}",
+            result[1]
         );
     }
 

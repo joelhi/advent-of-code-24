@@ -1,5 +1,7 @@
 use super::utils;
 
+const BASE: usize = 2;
+
 /// Solve the problem for day six, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let operations = parse_inputs(input_data)?;
@@ -17,7 +19,8 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
 fn validate_operation(operation: &(u64, Vec<u64>)) -> Result<bool, String> {
     let (result, inputs) = operation;
     let n = inputs.len();
-    for count in 0..n.pow(2) {
+    let max = BASE.pow(n.try_into().map_err(|_| format!("Cannot convert {} to u32", n))?);
+    for count in 0..max {
         let operations = match generate_binary_sequence(n, count) {
             Some(sequence) => Ok(sequence),
             None => Err("Failed to generate sequence of operations".to_owned()),
@@ -47,7 +50,7 @@ fn execute_operation(inputs: &[u64], operation_sequence: &[char]) -> Result<u64,
 
 /// Represent a number as a binary sequence of operations [`x`] or [`+`].
 fn generate_binary_sequence(n: usize, count: usize) -> Option<Vec<char>> {
-    if count >= (1 << n) {
+    if count >= (1 << n + 1) {
         return None;
     }
 
@@ -74,7 +77,7 @@ fn parse_row(row: &str) -> Result<(u64, Vec<u64>), String> {
 
     let result = parts[0]
         .parse::<u64>()
-        .map_err(|_| format!("Cannot parse u32 from {}", parts[0]))?;
+        .map_err(|_| format!("Cannot parse u64 from {}", parts[0]))?;
 
     let inputs = utils::parse_sequence_from_str::<u64>(&parts[1][1..], " ")?;
 
@@ -116,7 +119,7 @@ mod tests {
         let result =
             solve(&read_input_for_day(&7).expect("Expect the data file to be there.")).unwrap();
 
-        assert_eq!(0, result[0]);
+        assert_eq!(3351424677624, result[0]);
         assert_eq!(0, result[1]);
     }
 }

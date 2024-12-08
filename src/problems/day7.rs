@@ -19,7 +19,10 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
 fn validate_operation(operation: &(u64, Vec<u64>)) -> Result<bool, String> {
     let (result, inputs) = operation;
     let n = inputs.len();
-    let max = BASE.pow(n.try_into().map_err(|_| format!("Cannot convert {} to u32", n))?);
+    let max = BASE.pow(
+        n.try_into()
+            .map_err(|_| format!("Cannot convert {} to u32", n))?,
+    );
     for count in 0..max {
         let operations = match generate_binary_sequence(n, count) {
             Some(sequence) => Ok(sequence),

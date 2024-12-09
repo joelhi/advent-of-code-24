@@ -1,14 +1,12 @@
 use super::utils;
 
-const BASE: usize = 2;
-
 /// Solve the problem for day six, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
-    let operations = parse_inputs(input_data)?;
+    let equations = parse_inputs(input_data)?;
 
-    let result_part_1 = operations
+    let result_part_1 = equations
         .iter()
-        .filter(|op| validate_operation(op).is_ok_and(|b| b))
+        .filter(|eq| validate_equation(eq, &['x','+']).is_ok_and(|b| b))
         .map(|(r, _)| *r)
         .sum();
 
@@ -16,20 +14,28 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
 }
 
 /// Check if a solution exists to return the correct result
-fn validate_operation(operation: &(u64, Vec<u64>)) -> Result<bool, String> {
-    let (result, inputs) = operation;
-    let n = inputs.len();
-    let max = BASE.pow(
-        n.try_into()
-            .map_err(|_| format!("Cannot convert {} to u32", n))?,
-    );
-    for count in 0..max {
-        let operations = match generate_binary_sequence(n, count) {
-            Some(sequence) => Ok(sequence),
-            None => Err("Failed to generate sequence of operations".to_owned()),
-        }?;
+fn validate_equation(equation: &(u64, Vec<u64>), operations: &[char]) -> Result<bool, String> {
+    let (result, inputs) = equation;
 
-        if *result == execute_operation(inputs, &operations)? {
+    return dfs(result, inputs[0], inputs, operations, 0);
+}
+
+/// Run a Depth-First search on the possible combinations.
+fn dfs(result: &u64, value: u64, inputs: &[u64], operations: &[char], depth: usize)->Result<bool, String>{
+    // Reached end of tree, check final value and target.
+    if depth == inputs.len() - 1{
+        return Ok(value == *result);
+    }
+
+    // Not at end but value to large, abort branch
+    if value > *result{
+        return Ok(false);
+    }
+
+    // Evaluate next step starting from current node.
+    for op in operations{
+        let new_val = execute_operation(&value, &inputs[depth + 1], op)?;
+        if dfs(result, new_val, inputs, operations, depth + 1)?{
             return Ok(true);
         }
     }
@@ -37,32 +43,21 @@ fn validate_operation(operation: &(u64, Vec<u64>)) -> Result<bool, String> {
     Ok(false)
 }
 
-/// Execute a sequence of inputs with a sequence of operations, either [`x`] or [`+`]
-fn execute_operation(inputs: &[u64], operation_sequence: &[char]) -> Result<u64, String> {
-    let mut result = 0;
-    for (val, op) in inputs.iter().zip(operation_sequence) {
-        result = match op {
-            'x' => Ok(result * val),
-            '+' => Ok(result + val),
-            _ => Err("".to_owned()),
-        }?
+/// Execute a single operation on two values, either [`x`], [`+`] or [`|`]
+fn execute_operation(lhs: &u64, rhs: &u64, operation: &char) -> Result<u64, String> {
+    match operation {
+        'x' => Ok(lhs * rhs),
+        '+' => Ok(lhs + rhs),
+        '|' => concat_values(lhs, rhs),
+        _ => Err("".to_owned()),
     }
-
-    Ok(result)
 }
 
-/// Represent a number as a binary sequence of operations [`x`] or [`+`].
-fn generate_binary_sequence(n: usize, count: usize) -> Option<Vec<char>> {
-    if count >= (1 << n + 1) {
-        return None;
-    }
-
-    Some(
-        (0..n)
-            .rev()
-            .map(|i| if (count & (1 << i)) != 0 { 'x' } else { '+' })
-            .collect(),
-    )
+/// Concatenate to values into a new value
+fn concat_values(lhs: &u64, rhs: &u64)->Result<u64, String>{
+    let mut s = lhs.to_string();
+    s.push_str(&rhs.to_string());
+    s.parse::<u64>().map_err(|_| format!("Failed to parse {} into u64", s))
 }
 
 /// Parse the input data into the result and the inputs

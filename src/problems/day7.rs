@@ -6,11 +6,17 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
 
     let result_part_1 = equations
         .iter()
-        .filter(|eq| validate_equation(eq, &['x','+']).is_ok_and(|b| b))
+        .filter(|eq| validate_equation(eq, &['x', '+']).is_ok_and(|b| b))
         .map(|(r, _)| *r)
         .sum();
 
-    Ok(vec![result_part_1, 0])
+    let result_part_2 = equations
+        .iter()
+        .filter(|eq| validate_equation(eq, &['x', '+', '|']).is_ok_and(|b| b))
+        .map(|(r, _)| *r)
+        .sum();
+
+    Ok(vec![result_part_1, result_part_2])
 }
 
 /// Check if a solution exists to return the correct result
@@ -21,21 +27,27 @@ fn validate_equation(equation: &(u64, Vec<u64>), operations: &[char]) -> Result<
 }
 
 /// Run a Depth-First search on the possible combinations.
-fn dfs(result: &u64, value: u64, inputs: &[u64], operations: &[char], depth: usize)->Result<bool, String>{
+fn dfs(
+    result: &u64,
+    value: u64,
+    inputs: &[u64],
+    operations: &[char],
+    depth: usize,
+) -> Result<bool, String> {
     // Reached end of tree, check final value and target.
-    if depth == inputs.len() - 1{
+    if depth == inputs.len() - 1 {
         return Ok(value == *result);
     }
 
     // Not at end but value to large, abort branch
-    if value > *result{
+    if value > *result {
         return Ok(false);
     }
 
     // Evaluate next step starting from current node.
-    for op in operations{
+    for op in operations {
         let new_val = execute_operation(&value, &inputs[depth + 1], op)?;
-        if dfs(result, new_val, inputs, operations, depth + 1)?{
+        if dfs(result, new_val, inputs, operations, depth + 1)? {
             return Ok(true);
         }
     }
@@ -49,15 +61,16 @@ fn execute_operation(lhs: &u64, rhs: &u64, operation: &char) -> Result<u64, Stri
         'x' => Ok(lhs * rhs),
         '+' => Ok(lhs + rhs),
         '|' => concat_values(lhs, rhs),
-        _ => Err("".to_owned()),
+        _ => Err("Invalid operation".to_owned()),
     }
 }
 
 /// Concatenate to values into a new value
-fn concat_values(lhs: &u64, rhs: &u64)->Result<u64, String>{
+fn concat_values(lhs: &u64, rhs: &u64) -> Result<u64, String> {
     let mut s = lhs.to_string();
     s.push_str(&rhs.to_string());
-    s.parse::<u64>().map_err(|_| format!("Failed to parse {} into u64", s))
+    s.parse::<u64>()
+        .map_err(|_| format!("Failed to parse {} into u64", s))
 }
 
 /// Parse the input data into the result and the inputs
@@ -118,6 +131,6 @@ mod tests {
             solve(&read_input_for_day(&7).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(3351424677624, result[0]);
-        assert_eq!(0, result[1]);
+        assert_eq!(204976636995111, result[1]);
     }
 }

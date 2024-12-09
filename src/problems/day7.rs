@@ -22,8 +22,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
 /// Check if a solution exists to return the correct result
 fn validate_equation(equation: &(u64, Vec<u64>), operations: &[char]) -> Result<bool, String> {
     let (result, inputs) = equation;
-
-    return dfs(result, inputs[0], inputs, operations, 0);
+    dfs(result, inputs[0], inputs, operations, 0)
 }
 
 /// Run a Depth-First search on the possible combinations.

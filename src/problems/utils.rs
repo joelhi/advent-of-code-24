@@ -73,6 +73,24 @@ pub fn checked_add_increment(i: usize, increment: isize, factor: usize) -> Optio
     }
 }
 
+/// Increment or decrement the unsigned index
+pub fn checked_add_signed_increment(i: usize, increment: isize, factor: isize) -> Option<usize> {
+    let incr = increment.checked_mul(factor)?;
+    if incr < 0 {
+        i.checked_sub((-incr) as usize)
+    } else {
+        i.checked_add(incr as usize)
+    }
+}
+
+/// Computes the difference between two 2-d index locations.
+pub fn difference_2i(first: (usize, usize), second: (usize, usize)) -> Option<(isize, isize)> {
+    let d_i = (second.0 as isize).checked_add(-(first.0 as isize))?;
+    let d_j = (second.1 as isize).checked_add(-(first.1 as isize))?;
+
+    Some((d_i, d_j))
+}
+
 /// Transposes a grid of chars represented as a list of Strings.
 pub fn transpose_text_data(data: &[String]) -> Result<Vec<String>, String> {
     if data.is_empty() {

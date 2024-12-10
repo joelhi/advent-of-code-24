@@ -1,13 +1,22 @@
+use std::collections::HashSet;
+
 /// Solve the problem for day nine, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let data = input_data.join("");
-
     let mut expanded_mem = expand_mem(&data);
-    compact_mem(&mut expanded_mem)?;
+    // Part 1
+    let mut part_1_data = expanded_mem.clone();
+    compact_mem(&mut part_1_data)?;
 
-    let result_part_1 = checksum(&expanded_mem);
+    let result_part_1 = checksum(&part_1_data);
 
-    Ok(vec![result_part_1, 0])
+    // Part 2
+    let mut part_2_data = expanded_mem.clone();
+    compact_mem_blocks(&mut part_2_data);
+
+    let result_part_2 = checksum(&part_2_data);
+
+    Ok(vec![result_part_1, result_part_2])
 }
 
 /// Expand the compact data into a full list of the memory
@@ -34,25 +43,25 @@ fn expand_mem(data: &str) -> Vec<Option<u64>> {
     expanded
 }
 
-// Compact the memory into a single contiguous block
-fn compact_mem(expanded_memory: &mut [Option<u64>]) -> Result<(), String> {
+/// Compact the memory into a single contiguous block
+fn compact_mem(expanded_mem: &mut [Option<u64>]) -> Result<(), String> {
     let mut prev_empty = 0;
-    let mut prev_last = expanded_memory.len();
+    let mut prev_last = expanded_mem.len();
     loop {
-        if let Some((last_id, last_val)) = expanded_memory[0..prev_last]
+        if let Some((last_id, last_val)) = expanded_mem[0..prev_last]
             .iter()
             .enumerate()
             .rev()
             .find_map(|(i, opt)| opt.map(|v| (i, v)))
         {
-            if let Some(empty_id) = expanded_memory[prev_empty..last_id]
+            if let Some(empty_id) = expanded_mem[prev_empty..last_id]
                 .iter()
                 .enumerate()
                 .find(|(_, opt)| opt.is_none())
                 .map(|(id, _)| id)
             {
-                expanded_memory[last_id] = None;
-                expanded_memory[prev_empty + empty_id] = Some(last_val);
+                expanded_mem[last_id] = None;
+                expanded_mem[prev_empty + empty_id] = Some(last_val);
 
                 prev_empty = prev_empty + empty_id + 1;
                 prev_last = last_id;
@@ -66,6 +75,90 @@ fn compact_mem(expanded_memory: &mut [Option<u64>]) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+/// Compact the memory as blocks.
+fn compact_mem_blocks(expanded_mem: &mut [Option<u64>]){
+    let mut prev_data_index = expanded_mem.len();
+    let mut processed_ids = HashSet::new();
+    loop {
+        if let Some((data_index, data_len, val)) =
+            find_next_data_block(prev_data_index, expanded_mem)
+        {
+            let mut prev_free_index = 0;
+            loop {
+                if let Some((free_index, free_len)) =
+                    find_next_free_block(prev_free_index, expanded_mem)
+                {
+                    if !processed_ids.contains(&val) && free_index < data_index && free_len >= data_len {
+                        // Fits
+                        for i in 0..data_len {
+                            // Clear old spot
+                            expanded_mem[data_index + i] = None;
+                            // Place in new spot
+                            expanded_mem[free_index + i] = Some(val);
+                        }
+                        processed_ids.insert(val);
+                        break;
+                    } else {
+                        // Update new location for triggering next search
+                        prev_free_index = free_index + free_len;
+                    }
+                } else {
+                    break;
+                }
+            }
+            prev_data_index = data_index;
+        } else {
+            // Reached end of data
+            return;
+        }
+    }
+}
+
+/// Find the next free block of memory. Returns a tuple with the start index and the length.
+fn find_next_free_block(
+    start_index: usize,
+    expanded_mem: &[Option<u64>],
+) -> Option<(usize, usize)> {
+    if let Some(free_index) = expanded_mem[start_index..]
+        .iter()
+        .enumerate()
+        .find(|(_, opt)| opt.is_none())
+        .map(|(id, _)| id)
+    {
+        let index = start_index + free_index;
+        let mut len = 1;
+        while index + len < expanded_mem.len() - 1 && expanded_mem[index + len] == None {
+            len += 1
+        }
+
+        Some((index, len))
+    } else {
+        None
+    }
+}
+
+/// Find the next free block of memory. Returns a tuple with the start index and the length, and the value.
+fn find_next_data_block(
+    last_index: usize,
+    expanded_mem: &[Option<u64>],
+) -> Option<(usize, usize, u64)> {
+    if let Some((index, value)) = expanded_mem[0..last_index]
+        .iter()
+        .enumerate()
+        .rev()
+        .find_map(|(i, opt)| opt.map(|v| (i, v)))
+    {
+        let mut len = 1;
+        while len <= index && expanded_mem[index - len] == Some(value) {
+            len += 1
+        }
+
+        Some((index - (len - 1), len, value))
+    } else {
+        None
+    }
 }
 
 /// Compute the checksum for the memory
@@ -97,6 +190,11 @@ mod tests {
             "Result for part 1 example should be 1928 but was {}",
             result[0]
         );
+        assert_eq!(
+            2858, result[1],
+            "Result for part 2 example should be 2858 but was {}",
+            result[1]
+        );
     }
 
     #[test]
@@ -105,6 +203,6 @@ mod tests {
             solve(&read_input_for_day(&9).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(6463499258318, result[0]);
-        assert_eq!(0, result[1]);
+        assert_eq!(6493634986625, result[1]);
     }
 }

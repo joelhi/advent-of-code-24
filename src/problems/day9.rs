@@ -78,7 +78,7 @@ fn compact_mem(expanded_mem: &mut [Option<u64>]) -> Result<(), String> {
 }
 
 /// Compact the memory as blocks.
-fn compact_mem_blocks(expanded_mem: &mut [Option<u64>]){
+fn compact_mem_blocks(expanded_mem: &mut [Option<u64>]) {
     let mut prev_data_index = expanded_mem.len();
     let mut processed_ids = HashSet::new();
     loop {
@@ -90,7 +90,10 @@ fn compact_mem_blocks(expanded_mem: &mut [Option<u64>]){
                 if let Some((free_index, free_len)) =
                     find_next_free_block(prev_free_index, expanded_mem)
                 {
-                    if !processed_ids.contains(&val) && free_index < data_index && free_len >= data_len {
+                    if !processed_ids.contains(&val)
+                        && free_index < data_index
+                        && free_len >= data_len
+                    {
                         // Fits
                         for i in 0..data_len {
                             // Clear old spot

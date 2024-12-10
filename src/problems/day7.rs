@@ -38,7 +38,7 @@ fn dfs(
         return Ok(value == *result);
     }
 
-    // Not at end but value to large, abort branch
+    // Not at end but value to0 large, abort branch
     if value > *result {
         return Ok(false);
     }
@@ -64,7 +64,7 @@ fn execute_operation(lhs: &u64, rhs: &u64, operation: &char) -> Result<u64, Stri
     }
 }
 
-/// Concatenate to values into a new value
+/// Concatenate two values into a new value
 fn concat_values(lhs: &u64, rhs: &u64) -> Result<u64, String> {
     let mut s = lhs.to_string();
     s.push_str(&rhs.to_string());

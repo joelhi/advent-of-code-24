@@ -34,6 +34,8 @@ fn solve_day(day: &i32) -> Result<Vec<u64>, String> {
         5 => day5::solve(&input_data),
         6 => day6::solve(&input_data),
         7 => day7::solve(&input_data),
+        8 => day8::solve(&input_data),
+        9 => day9::solve(&input_data),
         ..=25 => Err(format!("Day {} is not solved yet", day)),
         _ => Err(format!(
             "Number {} is not a valid day for the calendar...",

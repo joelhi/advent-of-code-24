@@ -1,6 +1,6 @@
 use super::utils;
 
-/// Solve the problem for day six, given the provided data.
+/// Solve the problem for day seven, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let equations = parse_inputs(input_data)?;
 
@@ -119,9 +119,14 @@ mod tests {
         let result = solve(&data).unwrap();
         assert_eq!(
             3749, result[0],
-            "Result for part 1 example should be 3 but was {}",
+            "Result for part 1 example should be 3749 but was {}",
             result[0]
         );
+        assert_eq!(
+            11387, result[1],
+            "Result for part 2 example should be 11387 but was {}",
+            result[0]
+        )
     }
 
     #[test]

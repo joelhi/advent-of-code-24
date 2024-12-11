@@ -4,9 +4,6 @@ use super::utils;
 
 type Vec2u = (usize, usize);
 
-/// The set of steps possible to take for the trail
-const STEPS: &[(isize, isize); 4] = &[(1, 0), (-1, 0), (0, 1), (0, -1)];
-
 /// Solve the problem for day ten, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let trail_heads = find_trailheads(input_data);
@@ -48,7 +45,7 @@ fn step(current_level: usize, current_pos: Vec2u, reached: &mut Vec<Vec2u>, map:
     }
 
     // Find next steps
-    for &step in STEPS {
+    for step in [(1, 0), (-1, 0), (0, 1), (0, -1)] {
         find_valid_step(&current_pos, current_level + 1, step, reached, map);
     }
 }

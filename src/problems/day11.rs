@@ -10,13 +10,13 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     for _ in 0..25 {
         map_stones(&mut stone_map)?;
     }
-    let result_part_1 = stone_map.iter().map(|(_, c)| c).sum();
+    let result_part_1 = stone_map.values().sum();
 
     // Continue for part 2
     for _ in 0..50 {
         map_stones(&mut stone_map)?;
     }
-    let result_part_2 = stone_map.iter().map(|(_, c)| c).sum();
+    let result_part_2 = stone_map.values().sum();
 
     Ok(vec![result_part_1, result_part_2])
 }
@@ -38,7 +38,7 @@ fn map_stones(stone_map: &mut HashMap<u64, u64>) -> Result<(), String> {
     for (&val, &count) in stone_map.iter() {
         if val == 0 {
             *new_map.entry(1).or_insert(0) += count;
-        } else if let Some((a, b)) = split_val(val) {
+        } else if let Some((a, b)) = split_val(val)? {
             *new_map.entry(a).or_insert(0) += count;
             *new_map.entry(b).or_insert(0) += count;
         } else {
@@ -46,28 +46,28 @@ fn map_stones(stone_map: &mut HashMap<u64, u64>) -> Result<(), String> {
         }
     }
     *stone_map = new_map;
+
     Ok(())
 }
 
-fn split_val(val: u64) -> Option<(u64, u64)> {
+// Split a val with even number of digits into two numbers.
+fn split_val(val: u64) -> Result<Option<(u64, u64)>, String> {
     let num_str = val.to_string();
     let len = num_str.len();
 
     if !len % 2 == 0 {
-        return None;
+        return Ok(None);
     }
 
     let (first_half, second_half) = num_str.split_at(len / 2);
-    let first_half_num = first_half.parse::<u64>().expect(&format!(
-        "Should be able to parse {} into a number",
-        first_half
-    ));
-    let second_half_num = second_half.parse::<u64>().expect(&format!(
-        "Should be able to parse {} into a number",
-        second_half
-    ));
+    let first_half_num = first_half
+        .parse::<u64>()
+        .map_err(|_| format!("Failed to parse {} into a number", first_half))?;
+    let second_half_num = second_half
+        .parse::<u64>()
+        .map_err(|_| format!("Failed to parse {} into a number", second_half))?;
 
-    Some((first_half_num, second_half_num))
+    Ok(Some((first_half_num, second_half_num)))
 }
 
 #[cfg(test)]

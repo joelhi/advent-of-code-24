@@ -102,30 +102,28 @@ fn analyze_perimeters(perimeters: &mut HashMap<Vec2u, HashSet<(isize, isize)>>) 
     (length, sides)
 }
 
-/// Trace a contiguous set of perimeter blocks
+/// Trace a contiguous set of perimeter blocks.
 fn trace_side(
     state: (usize, usize, isize, isize),
     perimeters: &HashMap<Vec2u, HashSet<(isize, isize)>>,
-    logged: &mut HashSet<(usize, usize, isize, isize)>,
+    logged_perimeters: &mut HashSet<(usize, usize, isize, isize)>,
     reverse: bool,
 ) {
-    let (i, j, d_i, d_j) = state;
+    let (mut i, mut j, d_i, d_j) = state;
     let (step_i, step_j) = if reverse { (-d_j, -d_i) } else { (d_j, d_i) };
-    let mut factor = 1;
+
     loop {
-        let mut found = false;
-        if let Some(step) = increment_2d_index(i, j, step_i, step_j, factor) {
-            if let Some(p) = perimeters.get(&step) {
-                if p.contains(&(d_i, d_j)) {
-                    logged.insert((step.0, step.1, d_i, d_j));
-                    found = true
+        if let Some((next_i, next_j)) = increment_2d_index(i, j, step_i, step_j, 1) {
+            if let Some(neighbor_perimeters) = perimeters.get(&(next_i, next_j).into()) {
+                if neighbor_perimeters.contains(&(d_i, d_j)) {
+                    logged_perimeters.insert((next_i, next_j, d_i, d_j));
+                    i = next_i;
+                    j = next_j;
+                    continue;
                 }
             }
         }
-        if !found {
-            break;
-        }
-        factor += 1;
+        break;
     }
 }
 

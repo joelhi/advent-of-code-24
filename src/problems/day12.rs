@@ -11,7 +11,7 @@ type Vec2u = (usize, usize);
 /// Solve the problem for day twelve, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let results = find_regions(input_data)?;
-    
+
     let result_part_1 = results.iter().map(|(a, p, _)| a * p).sum();
     let result_part_2 = results.iter().map(|(a, _, s)| a * s).sum();
 
@@ -93,8 +93,8 @@ fn analyze_perimeters(perimeters: &mut HashMap<Vec2u, HashSet<(isize, isize)>>) 
             let perim_state = (*i, *j, *d_i, *d_j);
             if logged_perimeters.insert(perim_state) {
                 sides += 1;
-                trace_side(perim_state, &perimeters, &mut logged_perimeters, false);
-                trace_side(perim_state, &perimeters, &mut logged_perimeters, true);
+                trace_side(perim_state, perimeters, &mut logged_perimeters, false);
+                trace_side(perim_state, perimeters, &mut logged_perimeters, true);
             }
         }
     }
@@ -171,6 +171,6 @@ mod tests {
             solve(&read_input_for_day(&12).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(1371306, result[0]);
-        assert_eq!(0, result[1]);
+        assert_eq!(805880, result[1]);
     }
 }

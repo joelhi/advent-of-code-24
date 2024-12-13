@@ -35,6 +35,7 @@ fn parse_stone_map(input: &str) -> Result<HashMap<u64, u64>, String> {
 /// Compute a new map from the stones in the input map, by applying the rules
 fn map_stones(stone_map: &mut HashMap<u64, u64>) -> Result<(), String> {
     let mut new_map = HashMap::with_capacity(stone_map.len());
+
     for (&val, &count) in stone_map.iter() {
         if val == 0 {
             *new_map.entry(1).or_insert(0) += count;
@@ -95,7 +96,7 @@ mod tests {
     #[test]
     fn test_day_11() {
         let result =
-            solve(&read_input_for_day(&11).expect("Expect the data file to be there.")).unwrap();
+            solve(&read_input_for_day(11).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(229043, result[0]);
         assert_eq!(272673043446478, result[1]);

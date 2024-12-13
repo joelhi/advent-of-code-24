@@ -2,7 +2,7 @@ use std::{any, fs, io, str::FromStr};
 
 #[inline]
 /// Read the input for the specific day, given by the integer.
-pub fn read_input_for_day(day: &i32) -> io::Result<Vec<String>> {
+pub fn read_input_for_day(day: i32) -> io::Result<Vec<String>> {
     let result = fs::read_to_string(format!("data/day{day}.txt"))?
         .lines()
         .map(String::from)
@@ -39,7 +39,6 @@ pub fn parse_pair_from_str<T: FromStr + Copy>(
     Ok((values[0], values[1]))
 }
 
-#[inline]
 /// Get the character at a 2d index location from the slice of strings.
 pub fn get_char(data: &[String], i: usize, j: usize) -> Option<char> {
     let row = data.get(i)?;

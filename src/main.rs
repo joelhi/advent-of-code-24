@@ -10,7 +10,7 @@ fn main() {
     let day = &args[1].parse::<i32>().unwrap();
     let before = Instant::now();
     println!("Running day {}", day);
-    match solve_day(day) {
+    match solve_day(*day) {
         Ok(result) => {
             println!("The answers are:");
             for (i, val) in result.iter().enumerate() {
@@ -22,7 +22,7 @@ fn main() {
     }
 }
 
-fn solve_day(day: &i32) -> Result<Vec<u64>, String> {
+fn solve_day(day: i32) -> Result<Vec<u64>, String> {
     let input_data =
         read_input_for_day(day).or(Err(format!("Failed to read input data for day {}", day)))?;
 

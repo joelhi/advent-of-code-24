@@ -118,7 +118,7 @@ mod tests {
     #[test]
     fn test_day_3() {
         let result =
-            solve(&read_input_for_day(&3).expect("Expect the data file to be there.")).unwrap();
+            solve(&read_input_for_day(3).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(173529487, result[0]);
         assert_eq!(99532691, result[1]);

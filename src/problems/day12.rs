@@ -4,7 +4,7 @@ use crate::increment_2d_index;
 
 use super::utils;
 
-const NEIGHBORS: &[(isize, isize)] = &[(-1, 0), (1, 0), (0, -1), (0, 1)];
+const NEIGHBOURS: &[(isize, isize)] = &[(-1, 0), (1, 0), (0, -1), (0, 1)];
 
 type Vec2u = (usize, usize);
 
@@ -19,7 +19,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
 }
 
 /// Find all continuous regions using iterative, saturating bfs search.
-/// Returns a tuple with area and perimeter of all found areas.
+/// Returns a tuple with area and perimeter data of all found areas.
 fn find_regions(map: &[String]) -> Result<Vec<(u64, u64, u64)>, String> {
     let num_rows = map.len();
     let num_cols = map[0].len();
@@ -31,7 +31,7 @@ fn find_regions(map: &[String]) -> Result<Vec<(u64, u64, u64)>, String> {
                 continue;
             }
             if let Some(plant_type) = utils::get_char(map, i, j) {
-                regions.push(bfs(i, j, plant_type, map, &mut visited));
+                regions.push(bfs((i, j), plant_type, map, &mut visited));
             }
         }
     }
@@ -39,10 +39,9 @@ fn find_regions(map: &[String]) -> Result<Vec<(u64, u64, u64)>, String> {
     Ok(regions)
 }
 
-/// Compute a bfs search to track the contigous region with the certain char.
+/// Compute a bfs search to track the continuous region with the certain char.
 fn bfs(
-    i: usize,
-    j: usize,
+    pos: Vec2u,
     plant_type: char,
     map: &[String],
     visited: &mut HashSet<Vec2u>,
@@ -50,10 +49,10 @@ fn bfs(
     let mut area = 0;
     let mut perimeters = HashMap::new();
     let mut queue = VecDeque::new();
-    queue.push_back((i, j));
+    queue.push_back(pos);
     while let Some(next) = queue.pop_front() {
         if visited.insert(next) {
-            for &(d_i, d_j) in NEIGHBORS {
+            for &(d_i, d_j) in NEIGHBOURS {
                 if let Some(neighbour) = utils::increment_2d_index(next.0, next.1, d_i, d_j, 1) {
                     if Some(plant_type) == utils::get_char(map, neighbour.0, neighbour.1) {
                         if !visited.contains(&neighbour) {
@@ -166,7 +165,7 @@ mod tests {
     #[test]
     fn test_day_12() {
         let result =
-            solve(&read_input_for_day(&12).expect("Expect the data file to be there.")).unwrap();
+            solve(&read_input_for_day(12).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(1371306, result[0]);
         assert_eq!(805880, result[1]);

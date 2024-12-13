@@ -1,5 +1,6 @@
 use std::{any, fs, io, str::FromStr};
 
+#[inline]
 /// Read the input for the specific day, given by the integer.
 pub fn read_input_for_day(day: &i32) -> io::Result<Vec<String>> {
     let result = fs::read_to_string(format!("data/day{day}.txt"))?
@@ -10,6 +11,7 @@ pub fn read_input_for_day(day: &i32) -> io::Result<Vec<String>> {
     Ok(result)
 }
 
+#[inline]
 /// Parse a sequence of numbers in a string into a vec, assuming a single separator pattern.
 pub fn parse_sequence_from_str<T: FromStr>(text: &str, separator: &str) -> Result<Vec<T>, String> {
     text.split(separator)
@@ -20,6 +22,7 @@ pub fn parse_sequence_from_str<T: FromStr>(text: &str, separator: &str) -> Resul
         .collect()
 }
 
+#[inline]
 /// Parse a pair of numbers from a str, assuming two values separated by some separator
 pub fn parse_pair_from_str<T: FromStr + Copy>(
     text: &str,
@@ -36,6 +39,7 @@ pub fn parse_pair_from_str<T: FromStr + Copy>(
     Ok((values[0], values[1]))
 }
 
+#[inline]
 /// Get the character at a 2d index location from the slice of strings.
 pub fn get_char(data: &[String], i: usize, j: usize) -> Option<char> {
     let row = data.get(i)?;
@@ -49,6 +53,7 @@ pub fn get_char(data: &[String], i: usize, j: usize) -> Option<char> {
     Some(ch)
 }
 
+#[inline]
 /// Increment the i and j indexes with the increment. Return None if any is invalid.
 pub fn increment_2d_index(
     i: usize,
@@ -63,6 +68,7 @@ pub fn increment_2d_index(
     Some((i, j))
 }
 
+#[inline]
 /// Increment or decrement the unsigned index
 pub fn checked_add_increment(i: usize, increment: isize, factor: usize) -> Option<usize> {
     let incr = increment.checked_mul(factor as isize)?;
@@ -73,6 +79,7 @@ pub fn checked_add_increment(i: usize, increment: isize, factor: usize) -> Optio
     }
 }
 
+#[inline]
 /// Increment or decrement the unsigned index
 pub fn checked_add_signed_increment(i: usize, increment: isize, factor: isize) -> Option<usize> {
     let incr = increment.checked_mul(factor)?;
@@ -83,6 +90,7 @@ pub fn checked_add_signed_increment(i: usize, increment: isize, factor: isize) -
     }
 }
 
+#[inline]
 /// Computes the difference between two 2-d index locations.
 pub fn difference_2i(first: (usize, usize), second: (usize, usize)) -> Option<(isize, isize)> {
     let d_i = (second.0 as isize).checked_add(-(first.0 as isize))?;

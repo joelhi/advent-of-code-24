@@ -1,4 +1,6 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
+
+use crate::increment_2d_index;
 
 use super::utils;
 
@@ -8,15 +10,17 @@ type Vec2u = (usize, usize);
 
 /// Solve the problem for day twelve, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
-    let result_part_1 = find_regions(input_data)?.iter().map(|(a, p)| a * p).sum();
+    let results = find_regions(input_data)?;
+    
+    let result_part_1 = results.iter().map(|(a, p, _)| a * p).sum();
+    let result_part_2 = results.iter().map(|(a, _, s)| a * s).sum();
 
-    Ok(vec![result_part_1, 0])
+    Ok(vec![result_part_1, result_part_2])
 }
 
 /// Find all continuous regions using iterative, saturating bfs search.
 /// Returns a tuple with area and perimeter of all found areas.
-fn find_regions(map: &[String]) -> Result<Vec<(u64, u64)>, String> {
-    // Start from first available node
+fn find_regions(map: &[String]) -> Result<Vec<(u64, u64, u64)>, String> {
     let num_rows = map.len();
     let num_cols = map[0].len();
     let mut visited = HashSet::with_capacity(num_rows * num_cols);
@@ -26,10 +30,8 @@ fn find_regions(map: &[String]) -> Result<Vec<(u64, u64)>, String> {
             if visited.contains(&(i, j)) {
                 continue;
             }
-
             if let Some(plant_type) = utils::get_char(map, i, j) {
-                let (area, perimeter) = bfs(i, j, plant_type, map, &mut visited);
-                regions.push((area, perimeter));
+                regions.push(bfs(i, j, plant_type, map, &mut visited));
             }
         }
     }
@@ -37,39 +39,94 @@ fn find_regions(map: &[String]) -> Result<Vec<(u64, u64)>, String> {
     Ok(regions)
 }
 
-/// Compute a bfs search to track the continous region with the certain char.
+/// Compute a bfs search to track the contigous region with the certain char.
 fn bfs(
     i: usize,
     j: usize,
     plant_type: char,
     map: &[String],
     visited: &mut HashSet<Vec2u>,
-) -> (u64, u64) {
+) -> (u64, u64, u64) {
     let mut area = 0;
-    let mut perimeter = 0;
+    let mut perimeters = HashMap::new();
     let mut queue = VecDeque::new();
     queue.push_back((i, j));
     while let Some(next) = queue.pop_front() {
-        if !visited.insert(next) {
-            continue;
-        }
-
-        for &(d_i, d_j) in NEIGHBORS {
-            if let Some(neighbour) = utils::increment_2d_index(next.0, next.1, d_i, d_j, 1) {
-                if Some(plant_type) == utils::get_char(map, neighbour.0, neighbour.1) {
-                    if !visited.contains(&neighbour) {
-                        queue.push_back(neighbour);
+        if visited.insert(next) {
+            for &(d_i, d_j) in NEIGHBORS {
+                if let Some(neighbour) = utils::increment_2d_index(next.0, next.1, d_i, d_j, 1) {
+                    if Some(plant_type) == utils::get_char(map, neighbour.0, neighbour.1) {
+                        if !visited.contains(&neighbour) {
+                            queue.push_back(neighbour);
+                        }
+                    } else {
+                        perimeters
+                            .entry(next)
+                            .or_insert_with(HashSet::new)
+                            .insert((d_i, d_j));
                     }
                 } else {
-                    perimeter += 1;
+                    perimeters
+                        .entry(next)
+                        .or_insert_with(HashSet::new)
+                        .insert((d_i, d_j));
                 }
-            } else {
-                perimeter += 1;
+            }
+            area += 1;
+        }
+    }
+    let (perimeter_length, num_perimeter_sides) = analyze_perimeters(&mut perimeters);
+    (area, perimeter_length, num_perimeter_sides)
+}
+
+/// Analyze the recorded perimeter to find the total length and the number of sides
+fn analyze_perimeters(perimeters: &mut HashMap<Vec2u, HashSet<(isize, isize)>>) -> (u64, u64) {
+    let length = perimeters
+        .iter()
+        .map(|(_, perims)| perims.len() as u64)
+        .sum();
+
+    let mut sides = 0;
+    let mut logged_perimeters = HashSet::new();
+    for ((i, j), p) in perimeters.iter() {
+        for (d_i, d_j) in p.iter() {
+            let perim_state = (*i, *j, *d_i, *d_j);
+            if logged_perimeters.insert(perim_state) {
+                sides += 1;
+                trace_side(perim_state, &perimeters, &mut logged_perimeters, false);
+                trace_side(perim_state, &perimeters, &mut logged_perimeters, true);
             }
         }
-        area += 1;
     }
-    (area, perimeter)
+
+    (length, sides)
+}
+
+/// Trace a contiguous set of perimeter blocks
+fn trace_side(
+    state: (usize, usize, isize, isize),
+    perimeters: &HashMap<Vec2u, HashSet<(isize, isize)>>,
+    logged: &mut HashSet<(usize, usize, isize, isize)>,
+    reverse: bool,
+) {
+    let (i, j, d_i, d_j) = state;
+    let (step_i, step_j) = if reverse { (-d_j, -d_i) } else { (d_j, d_i) };
+    let mut factor = 1;
+    loop {
+        let mut found = false;
+        if let Some(step) = increment_2d_index(i, j, step_i, step_j, factor) {
+            if let Some(p) = perimeters.get(&step) {
+                if p.contains(&(d_i, d_j)) {
+                    logged.insert((step.0, step.1, d_i, d_j));
+                    found = true
+                }
+            }
+        }
+        if !found {
+            break;
+        }
+        factor += 1;
+    }
 }
 
 #[cfg(test)]
@@ -98,8 +155,13 @@ mod tests {
         let result = solve(&data).unwrap();
         assert_eq!(
             1930, result[0],
-            "Result for part 1 example should be 55312 but was {}",
+            "Result for part 1 example should be 1930 but was {}",
             result[0]
+        );
+        assert_eq!(
+            1206, result[1],
+            "Result for part 2 example should be 1206 but was {}",
+            result[1]
         );
     }
 

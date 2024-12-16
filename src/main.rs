@@ -10,7 +10,7 @@ fn main() {
     let day = &args[1].parse::<i32>().unwrap();
     let before = Instant::now();
     println!("Running day {}", day);
-    match solve_day(day) {
+    match solve_day(*day) {
         Ok(result) => {
             println!("The answers are:");
             for (i, val) in result.iter().enumerate() {
@@ -40,6 +40,7 @@ fn solve_day(day: i32) -> Result<Vec<u64>, String> {
         11 => day11::solve(&input_data),
         12 => day12::solve(&input_data),
         13 => day13::solve(&input_data),
+        14 => day14::solve(&input_data),
         ..=25 => Err(format!("Day {} is not solved yet", day)),
         _ => Err(format!(
             "Number {} is not a valid day for the calendar...",

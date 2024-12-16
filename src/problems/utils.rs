@@ -80,12 +80,12 @@ pub fn checked_add_increment(i: usize, increment: isize, factor: usize) -> Optio
 
 #[inline]
 /// Increment or decrement the unsigned index
-pub fn checked_add_signed_increment(i: usize, increment: isize, factor: isize) -> Option<usize> {
+pub fn checked_add_signed_increment(i: usize, increment: isize, factor: isize) -> Option<isize> {
     let incr = increment.checked_mul(factor)?;
     if incr < 0 {
-        i.checked_sub((-incr) as usize)
+        (i as isize).checked_sub(-incr)
     } else {
-        i.checked_add(incr as usize)
+        (i as isize).checked_add(incr)
     }
 }
 

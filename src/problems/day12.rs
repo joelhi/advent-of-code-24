@@ -113,7 +113,7 @@ fn trace_side(
 
     loop {
         if let Some((next_i, next_j)) = increment_2d_index(i, j, step_i, step_j, 1) {
-            if let Some(neighbor_perimeters) = perimeters.get(&(next_i, next_j).into()) {
+            if let Some(neighbor_perimeters) = perimeters.get(&(next_i, next_j)) {
                 if neighbor_perimeters.contains(&(d_i, d_j)) {
                     logged_perimeters.insert((next_i, next_j, d_i, d_j));
                     i = next_i;

@@ -50,7 +50,7 @@ fn execute_command(map_data: &mut MapData, pos: &mut Vec2u, command: &char) -> R
     if walls.contains(&new_pos) {
         return Ok(());
     } else if boxes.contains(&new_pos) {
-        if move_box(boxes, walls, &new_pos, &step)?{
+        if move_box(boxes, walls, &new_pos, &step)? {
             boxes.remove(&new_pos);
             *pos = new_pos;
         }

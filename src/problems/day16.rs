@@ -95,11 +95,7 @@ fn should_check_tile(visited: &HashMap<Vec2u, u64>, pos: &Vec2u, cost: u64) -> b
 }
 
 fn step(state: &State, walls: &HashSet<Vec2u>, visited: &HashMap<Vec2u, u64>) -> Vec<State> {
-    let directions = [
-        state.1,
-        ortho_dir(state.1, true),
-        ortho_dir(state.1, false),
-    ];
+    let directions = [state.1, ortho_dir(state.1, true), ortho_dir(state.1, false)];
 
     directions
         .iter()
@@ -128,7 +124,6 @@ fn is_tile_valid(
 ) -> bool {
     !walls.contains(tile) && should_check_tile(visited, tile, cost)
 }
-
 
 #[cfg(test)]
 mod tests {

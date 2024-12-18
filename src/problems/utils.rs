@@ -120,3 +120,12 @@ pub fn transpose_text_data(data: &[String]) -> Result<Vec<String>, String> {
 
     Ok(transposed)
 }
+
+/// Rotate the direction clockwise
+pub fn ortho_dir(v: (isize, isize), clockwise: bool) -> (isize, isize) {
+    if clockwise {
+        (v.1, -v.0)
+    } else {
+        (-v.1, v.0)
+    }
+}

@@ -1,6 +1,6 @@
 /// Solve the problem for day 16, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
-    Ok(vec![0,0])
+    Ok(vec![0, 0])
 }
 
 #[cfg(test)]

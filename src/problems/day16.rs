@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet, VecDeque},
-    u64,
-};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use crate::{increment_2d_index, ortho_dir};
 

@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::increment_2d_index;
+use crate::{increment_2d_index, ortho_dir};
 
 use super::utils;
 
@@ -103,8 +103,8 @@ fn update_state(
     let ((i, j), (v_i, v_j)) = state;
     if let Some(pos) = utils::increment_2d_index(i, j, v_i, v_j, 1) {
         if obstacles.contains(&pos) {
-            let (v_i, v_j) = update_dir((v_i, v_j))?;
-            return update_state(((i, j), (v_i, v_j)), obstacles, limits);
+            let v_perp = ortho_dir((v_i, v_j), true);
+            return update_state(((i, j), v_perp), obstacles, limits);
         } else if pos.0 < limits.0 && pos.1 < limits.1 {
             return Some((pos, (v_i, v_j)));
         }
@@ -112,22 +112,6 @@ fn update_state(
 
     // no valid position
     None
-}
-
-/// Rotate the direction clockwise
-fn update_dir(v: Vec2i) -> Option<Vec2i> {
-    let (v_i, v_j) = v;
-    if v_i < 0 {
-        Some((0, 1))
-    } else if v_i > 0 {
-        Some((0, -1))
-    } else if v_j < 0 {
-        Some((-1, 0))
-    } else if v_j > 0 {
-        Some((1, 0))
-    } else {
-        None
-    }
 }
 
 /// Find the location and direction of travel for the guard in the data.

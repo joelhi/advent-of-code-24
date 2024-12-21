@@ -1,4 +1,3 @@
-
 use regex::Regex;
 
 type Registers = (u64, u64, u64);
@@ -8,7 +7,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (mut registers, program) = parse_input(input_data)?;
 
     println!("Program");
-    for val in program.iter(){
+    for val in program.iter() {
         print!("{}", expand_oct(*val, 1));
     }
     println!("");
@@ -19,8 +18,8 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let output = compute_program(&mut registers, &program)?;
 
     println!("Output");
-    for val in output.iter(){
-        print!("{}",expand_oct(*val, 1));
+    for val in output.iter() {
+        print!("{}", expand_oct(*val, 1));
     }
 
     Ok(vec![
@@ -35,14 +34,14 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     ])
 }
 
-fn expand_oct(val: u64, steps: usize)->String{
+fn expand_oct(val: u64, steps: usize) -> String {
     let mut s = String::new();
-    for i in (0..steps*3).step_by(3) {
+    for i in (0..steps * 3).step_by(3) {
         let mask = 0b111;
         let three_bits = (val >> i) & mask;
 
         // Process the 3 bits (here we simply print them)
-        let t = format!("{:03b}, ",three_bits);
+        let t = format!("{:03b}, ", three_bits);
         s.push_str(&t);
     }
 

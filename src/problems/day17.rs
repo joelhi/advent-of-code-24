@@ -6,9 +6,12 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
 
     let output = compute_program(&mut registers, &program)?;
 
-    println!("Registers - A: {} B: {} C: {}", registers.0, registers.1, registers.2);
+    println!(
+        "Registers - A: {} B: {} C: {}",
+        registers.0, registers.1, registers.2
+    );
 
-    for val in output.iter(){
+    for val in output.iter() {
         print!("{},", val);
     }
     println!("");
@@ -30,7 +33,12 @@ fn compute_program(registers: &mut (u64, u64, u64), program: &[u64]) -> Result<V
     let mut i = 0;
     let mut increment = true;
     loop {
-        println!("Exectuting instruction {}, op: {} operand: {}",i, program[i], program[i + 1]);
+        println!(
+            "Exectuting instruction {}, op: {} operand: {}",
+            i,
+            program[i],
+            program[i + 1]
+        );
         if let Some(val) = compute_operation(
             program[i],
             program[i + 1],
@@ -185,7 +193,6 @@ Program: 0,1,5,4,3,0";
             result[0]
         );
     }
-
 
     #[test]
     fn test_day_17() {

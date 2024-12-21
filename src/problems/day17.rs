@@ -3,7 +3,7 @@ use regex::Regex;
 
 type Registers = (u64, u64, u64);
 
-/// Solve the problem for day 16, given the provided data.
+/// Solve the problem for day 17, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (mut registers, program) = parse_input(input_data)?;
 

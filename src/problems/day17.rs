@@ -1,3 +1,4 @@
+
 use regex::Regex;
 
 type Registers = (u64, u64, u64);
@@ -6,7 +7,21 @@ type Registers = (u64, u64, u64);
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (mut registers, program) = parse_input(input_data)?;
 
+    println!("Program");
+    for val in program.iter(){
+        print!("{}", expand_oct(*val, 1));
+    }
+    println!("");
+
+    println!("A:\n{}", expand_oct(registers.0, 8));
+
+    //println!("Process");
     let output = compute_program(&mut registers, &program)?;
+
+    println!("Output");
+    for val in output.iter(){
+        print!("{}",expand_oct(*val, 1));
+    }
 
     Ok(vec![
         output
@@ -20,17 +35,34 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     ])
 }
 
+fn expand_oct(val: u64, steps: usize)->String{
+    let mut s = String::new();
+    for i in (0..steps*3).step_by(3) {
+        let mask = 0b111;
+        let three_bits = (val >> i) & mask;
+
+        // Process the 3 bits (here we simply print them)
+        let t = format!("{:03b}, ",three_bits);
+        s.push_str(&t);
+    }
+
+    s
+}
+
 fn compute_program(registers: &mut Registers, program: &[u64]) -> Result<Vec<u64>, String> {
     let mut output = Vec::new();
     let mut i = 0;
     let mut increment = true;
     loop {
-        println!(
-            "Exectuting instruction {}, op: {} operand: {}",
-            i,
-            program[i],
-            program[i + 1]
-        );
+        // println!("A: {}", expand_oct(registers.0, 8));
+        // println!("B: {}", expand_oct(registers.1, 8));
+        // println!("C: {}", expand_oct(registers.2, 8));
+        // println!(
+        //     "{}: op: {} operand: {}",
+        //     i,
+        //     expand_oct(program[i], 1),
+        //     expand_oct(program[i + 1], 1)
+        // );
         if let Some(val) = compute_operation(
             program[i],
             program[i + 1],
@@ -83,7 +115,9 @@ fn compute_operation(
             registers.1 = registers.1 ^ registers.2;
         }
         5 => {
-            return Ok(Some(combo_operand(operand, registers)? % 8));
+            let val = combo_operand(operand, registers)? % 8;
+            println!("Output: {}", expand_oct(val, 1));
+            return Ok(Some(val));
         }
         6 => {
             registers.1 = registers.0 / (2_u64.pow(combo_operand(operand, registers)? as u32));

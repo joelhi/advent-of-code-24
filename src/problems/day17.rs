@@ -189,7 +189,7 @@ Program: 0,1,5,4,3,0";
     #[test]
     fn test_day_17() {
         let result =
-            solve(&read_input_for_day(16).expect("Expect the data file to be there.")).unwrap();
+            solve(&read_input_for_day(17).expect("Expect the data file to be there.")).unwrap();
 
         assert_eq!(150373031, result[0]);
         assert_eq!(0, result[1]);

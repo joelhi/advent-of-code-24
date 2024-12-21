@@ -12,7 +12,11 @@ const MAP_SIZE: Vec2u = (71, 71);
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let result_part_1 = solve_for_size(input_data, 0, 1024, MAP_SIZE)?;
     let result_part_2 = find_unsolveable_config(input_data, MAP_SIZE)?;
-    Ok(vec![result_part_1, result_part_2.0 as u64, result_part_2.1 as u64])
+    Ok(vec![
+        result_part_1,
+        result_part_2.0 as u64,
+        result_part_2.1 as u64,
+    ])
 }
 
 /// Solve the problem for day 18, given the provided data.
@@ -30,14 +34,14 @@ pub fn solve_for_size(
 }
 
 /// Find unsolveable configuration of bytes, starting from part 1 and adding one at a time.
-fn find_unsolveable_config(input_data: &[String], map_size: Vec2u)->Result<Vec2u, String>{
+fn find_unsolveable_config(input_data: &[String], map_size: Vec2u) -> Result<Vec2u, String> {
     let mut bytes = parse_bytes(input_data, 0, 1024)?;
 
-    for i in 1024..input_data.len(){
+    for i in 1024..input_data.len() {
         let next_byte = add_byte(input_data, &mut bytes, i)?;
-        let result = trace((0,0), map_size, &bytes);
+        let result = trace((0, 0), map_size, &bytes);
 
-        if result.is_err(){
+        if result.is_err() {
             return Ok(next_byte);
         }
     }
@@ -54,7 +58,11 @@ fn parse_bytes(input_data: &[String], start: usize, end: usize) -> Result<HashSe
 }
 
 /// Add an additional byte from the array. Returns the location of the added byte.
-fn add_byte(input_data: &[String], bytes: &mut HashSet<Vec2u>, index: usize)->Result<Vec2u, String>{
+fn add_byte(
+    input_data: &[String],
+    bytes: &mut HashSet<Vec2u>,
+    index: usize,
+) -> Result<Vec2u, String> {
     let byte = parse_pair_from_str(&input_data[index], ",")?;
     bytes.insert(byte);
     Ok(byte)
@@ -134,7 +142,7 @@ mod tests {
 
         let data: Vec<String> = map.lines().map(String::from).collect();
 
-        let result = solve_for_size(&data, 0, 12, (7,7)).unwrap();
+        let result = solve_for_size(&data, 0, 12, (7, 7)).unwrap();
         assert_eq!(
             22, result,
             "Result for part 1 example should be 22 but was {}",

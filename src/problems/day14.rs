@@ -81,7 +81,6 @@ fn count_quadrants(robot_data: &[(Vec2u, Vec2i)], w: usize, h: usize) -> u64 {
 
 /// Parse the data for each robot, as (position, velocity).
 fn parse_robot_data(input_data: &[String]) -> Result<Vec<(Vec2u, Vec2i)>, String> {
-    // Compile the regex once
     let re = Regex::new(r"-?\d+").map_err(|_| "Failed to compile regex.")?;
 
     input_data

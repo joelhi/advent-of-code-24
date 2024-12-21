@@ -1,20 +1,12 @@
 use regex::Regex;
 
+type Registers = (u64, u64, u64);
+
 /// Solve the problem for day 16, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (mut registers, program) = parse_input(input_data)?;
 
     let output = compute_program(&mut registers, &program)?;
-
-    println!(
-        "Registers - A: {} B: {} C: {}",
-        registers.0, registers.1, registers.2
-    );
-
-    for val in output.iter() {
-        print!("{},", val);
-    }
-    println!("");
 
     Ok(vec![
         output
@@ -28,7 +20,7 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     ])
 }
 
-fn compute_program(registers: &mut (u64, u64, u64), program: &[u64]) -> Result<Vec<u64>, String> {
+fn compute_program(registers: &mut Registers, program: &[u64]) -> Result<Vec<u64>, String> {
     let mut output = Vec::new();
     let mut i = 0;
     let mut increment = true;
@@ -67,7 +59,7 @@ fn compute_program(registers: &mut (u64, u64, u64), program: &[u64]) -> Result<V
 fn compute_operation(
     operation: u64,
     operand: u64,
-    registers: &mut (u64, u64, u64),
+    registers: &mut Registers,
     i: &mut usize,
     increment: &mut bool,
 ) -> Result<Option<u64>, String> {
@@ -106,7 +98,7 @@ fn compute_operation(
 }
 
 /// Get the combo operand for the value
-fn combo_operand(operand: u64, registers: &(u64, u64, u64)) -> Result<u64, String> {
+fn combo_operand(operand: u64, registers: &Registers) -> Result<u64, String> {
     match operand {
         0..=3 => Ok(operand),
         4 => Ok(registers.0),
@@ -117,7 +109,7 @@ fn combo_operand(operand: u64, registers: &(u64, u64, u64)) -> Result<u64, Strin
 }
 
 /// Parse the registers and program commands
-fn parse_input(input_data: &[String]) -> Result<((u64, u64, u64), Vec<u64>), String> {
+fn parse_input(input_data: &[String]) -> Result<(Registers, Vec<u64>), String> {
     let mut split = input_data.split(|s| s.is_empty());
     let registers = split.next().ok_or("Failed to parse inputs")?;
     let program = &split.next().ok_or("Failed to parse inputs")?[0];
@@ -126,7 +118,7 @@ fn parse_input(input_data: &[String]) -> Result<((u64, u64, u64), Vec<u64>), Str
 }
 
 /// Read the inital values from the input for the registers
-fn parse_registers(input_data: &[String]) -> Result<(u64, u64, u64), String> {
+fn parse_registers(input_data: &[String]) -> Result<Registers, String> {
     let re = Regex::new(r"-?\d+").map_err(|_| "Failed to compile regex.")?;
     if input_data.len() != 3 {
         return Err(format!(

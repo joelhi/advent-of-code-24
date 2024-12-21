@@ -10,7 +10,6 @@ pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     for val in program.iter() {
         print!("{}", expand_oct(*val, 1));
     }
-    println!("");
 
     println!("A:\n{}", expand_oct(registers.0, 8));
 
@@ -96,10 +95,10 @@ fn compute_operation(
 ) -> Result<Option<u64>, String> {
     match operation {
         0 => {
-            registers.0 = registers.0 / (2_u64.pow(combo_operand(operand, registers)? as u32));
+            registers.0 /= 2_u64.pow(combo_operand(operand, registers)? as u32);
         }
         1 => {
-            registers.1 = registers.1 ^ operand;
+            registers.1 ^= operand;
         }
         2 => {
             registers.1 = combo_operand(operand, registers)? % 8;
@@ -111,7 +110,7 @@ fn compute_operation(
             }
         }
         4 => {
-            registers.1 = registers.1 ^ registers.2;
+            registers.1 ^= registers.2;
         }
         5 => {
             let val = combo_operand(operand, registers)? % 8;
@@ -137,7 +136,7 @@ fn combo_operand(operand: u64, registers: &Registers) -> Result<u64, String> {
         4 => Ok(registers.0),
         5 => Ok(registers.1),
         6 => Ok(registers.2),
-        _ => return Err(format!("No valid combo operand for: {}", operand)),
+        _ => Err(format!("No valid combo operand for: {}", operand)),
     }
 }
 

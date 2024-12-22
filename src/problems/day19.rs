@@ -47,16 +47,13 @@ fn solve_from_index(
 
     let mut options = 0;
     while let Some(start) = queue.pop_back() {
-        if start == design.len() || solutions_at[start].is_some() {
-            options += if start == design.len() {
-                1
-            } else {
-                solutions_at[start].unwrap()
-            };
-            continue;
+        if start == design.len() {
+            options += 1;
+        } else if let Some(solution) = solutions_at[start] {
+            options += solution;
+        } else {
+            queue.extend(find_matches_at(design, start, patterns));
         }
-
-        queue.extend(find_matches_at(design, start, patterns));
     }
     options
 }

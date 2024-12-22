@@ -1,6 +1,6 @@
 use std::collections::{HashMap, VecDeque};
 
-/// Solve the problem for day 18, given the provided data.
+/// Solve the problem for day 19, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (designs, patterns) = parse_input(input_data);
     let solutions: Vec<usize> = designs
@@ -24,15 +24,15 @@ fn parse_input(input_data: &[String]) -> (Vec<&str>, Vec<&str>) {
 
 /// Check if the design can be made from the available patterns.
 fn compute_num_solutions(design: &str, patterns: &[&str]) -> usize {
-    let mut solutions_at = HashMap::new();
-
+    let mut solutions_at = Vec::with_capacity(design.len());
+    solutions_at.resize(design.len(), None);
     for i in 0..design.len() {
         let index = design.len() - (i + 1);
         let num_solutions = solve_from_index(design, patterns, index, &solutions_at);
-        solutions_at.insert(index, num_solutions);
+        solutions_at[index] = Some(num_solutions);
     }
 
-    *solutions_at.get(&0).unwrap_or(&0)
+    solutions_at[0].unwrap_or(0)
 }
 
 /// Find the number of solutions, starting from the specific index.
@@ -40,21 +40,20 @@ fn solve_from_index(
     design: &str,
     patterns: &[&str],
     index: usize,
-    solutions_at: &HashMap<usize, usize>,
+    solutions_at: &[Option<usize>],
 ) -> usize {
     let mut queue = VecDeque::new();
     queue.push_front(index);
 
     let mut options = 0;
     while let Some(start) = queue.pop_back() {
-        if start == design.len() || solutions_at.contains_key(&start) {
-            options += solutions_at.get(&start).unwrap_or(&1);
+        if start == design.len() || solutions_at[start].is_some() {
+            options += if start == design.len() { 1 } else { solutions_at[start].unwrap() };
             continue;
         }
 
         queue.extend(find_matches_at(design, start, patterns));
     }
-
     options
 }
 

@@ -1,4 +1,4 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::VecDeque;
 
 /// Solve the problem for day 19, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {

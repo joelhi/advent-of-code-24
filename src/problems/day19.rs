@@ -3,7 +3,10 @@ use std::collections::{HashMap, VecDeque};
 /// Solve the problem for day 18, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (designs, patterns) = parse_input(input_data);
-    let solutions = match_patterns(&designs, &patterns);
+    let solutions: Vec<usize> = designs
+        .iter()
+        .map(|&design| compute_num_solutions(design, &patterns))
+        .collect();
 
     Ok(vec![
         solutions.iter().filter(|&s| *s > 0).count() as u64,
@@ -19,18 +22,8 @@ fn parse_input(input_data: &[String]) -> (Vec<&str>, Vec<&str>) {
     (designs, patterns)
 }
 
-/// Match the patterns to the designs. Return the ones that are solveable.
-fn match_patterns(designs: &[&str], patterns: &[&str]) -> Vec<usize> {
-    let mut solutions = Vec::new();
-    for &design in designs {
-        solutions.push(can_make(design, patterns));
-    }
-
-    solutions
-}
-
 /// Check if the design can be made from the available patterns.
-fn can_make(design: &str, patterns: &[&str]) -> usize {
+fn compute_num_solutions(design: &str, patterns: &[&str]) -> usize {
     let mut solutions_at = HashMap::new();
 
     for i in 0..design.len() {
@@ -67,14 +60,17 @@ fn solve_from_index(
 
 /// Find all the matches at the current start index
 fn find_matches_at(design: &str, start: usize, patterns: &[&str]) -> Vec<usize> {
-    let mut next_indices = Vec::new();
-    for &pattern in patterns {
-        if design[start..].starts_with(pattern) {
-            next_indices.push(start + pattern.len());
-        }
-    }
-
-    next_indices
+    let substring = &design[start..];
+    patterns
+        .iter()
+        .filter_map(|&pattern| {
+            if substring.starts_with(pattern) {
+                Some(start + pattern.len())
+            } else {
+                None
+            }
+        })
+        .collect()
 }
 
 #[cfg(test)]

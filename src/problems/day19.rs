@@ -20,7 +20,7 @@ fn parse_input(input_data: &[String]) -> (Vec<&str>, Vec<&str>) {
 }
 
 /// Match the patterns to the designs. Return the ones that are solveable.
-fn match_patterns<'a>(designs: &[&'a str], patterns: &[&'a str]) -> Vec<usize> {
+fn match_patterns(designs: &[&str], patterns: &[&str]) -> Vec<usize> {
     let mut solutions = Vec::new();
     for &design in designs {
         solutions.push(can_make(design, patterns));
@@ -33,9 +33,10 @@ fn match_patterns<'a>(designs: &[&'a str], patterns: &[&'a str]) -> Vec<usize> {
 fn can_make(design: &str, patterns: &[&str]) -> usize {
     let mut solutions_at = HashMap::new();
 
-    for i in 1..design.len() + 1 {
-        let num_solutions = solve_from_index(design, patterns, design.len() - i, &solutions_at);
-        solutions_at.insert(design.len() - i, num_solutions);
+    for i in 0..design.len() {
+        let index = design.len() - (i + 1);
+        let num_solutions = solve_from_index(design, patterns, index, &solutions_at);
+        solutions_at.insert(index, num_solutions);
     }
 
     *solutions_at.get(&0).unwrap_or(&0)
@@ -114,7 +115,7 @@ bbrgwb";
         let result =
             solve(&read_input_for_day(19).expect("Expect the data file to be there.")).unwrap();
 
-        assert_eq!(0, result[0]);
-        assert_eq!(0, result[1]);
+        assert_eq!(276, result[0]);
+        assert_eq!(681226908011510, result[1]);
     }
 }

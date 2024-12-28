@@ -6,7 +6,7 @@ use crate::Vec2u;
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (start, end, walls) = parse_maze(input_data)?;
 
-    Ok(vec![0,0])
+    Ok(vec![0, 0])
 }
 
 /// Parse start, end, and wall locations from the map.

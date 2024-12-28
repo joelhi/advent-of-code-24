@@ -1,9 +1,6 @@
 use regex::Regex;
 
-use crate::checked_add_signed_increment;
-
-type Vec2u = (usize, usize);
-type Vec2i = (isize, isize);
+use crate::{checked_add_signed_increment, Vec2i, Vec2u};
 
 /// Solve the problem for day 14, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {

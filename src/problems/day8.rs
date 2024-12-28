@@ -1,10 +1,10 @@
 use std::collections::{HashMap, HashSet};
 
+use crate::Vec2u;
+
 use super::utils;
 
 const NON_ANTENNA_SYMBOLS: &[char] = &['.', '#'];
-
-type Vec2u = (usize, usize);
 
 /// Solve the problem for day eight, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {

@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
-use super::utils;
+use crate::Vec2u;
 
-type Vec2u = (usize, usize);
+use super::utils;
 
 /// Solve the problem for day ten, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {

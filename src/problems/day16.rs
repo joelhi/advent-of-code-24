@@ -1,9 +1,6 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use crate::{increment_2d_index, ortho_dir};
-
-type Vec2u = (usize, usize);
-type Vec2i = (isize, isize);
+use crate::{increment_2d_index, ortho_dir, Vec2i, Vec2u};
 
 /// Struct to store the state of each path tracker
 struct State(Vec2u, Vec2i, u64, Vec<Vec2u>);

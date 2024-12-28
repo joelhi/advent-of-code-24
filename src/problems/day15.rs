@@ -1,9 +1,7 @@
 use std::collections::HashSet;
 
-use crate::increment_2d_index;
+use crate::{increment_2d_index, Vec2i, Vec2u};
 
-type Vec2u = (usize, usize);
-type Vec2i = (isize, isize);
 type MapData = (HashSet<Vec2u>, HashSet<Vec2u>);
 
 /// Solve the problem for day 15, given the provided data.

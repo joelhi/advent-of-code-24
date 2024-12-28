@@ -1,5 +1,10 @@
 use std::{any, fs, io, str::FromStr};
 
+/// Unsigned 2-d index.
+pub type Vec2u = (usize, usize);
+/// Signed 2-d index.
+pub type Vec2i = (isize, isize);
+
 #[inline]
 /// Read the input for the specific day, given by the integer.
 pub fn read_input_for_day(day: i32) -> io::Result<Vec<String>> {

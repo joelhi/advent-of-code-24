@@ -1,13 +1,8 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::{increment_2d_index, ortho_dir};
+use crate::{increment_2d_index, ortho_dir, Vec2i, Vec2u};
 
 use super::utils;
-
-// Unsigned 2d coord
-type Vec2u = (usize, usize);
-// Signed 2d coord
-type Vec2i = (isize, isize);
 
 /// Solve the problem for day six, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {

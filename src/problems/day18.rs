@@ -1,8 +1,6 @@
 use std::collections::{HashSet, VecDeque};
 
-use crate::{increment_2d_index, parse_pair_from_str};
-
-type Vec2u = (usize, usize);
+use crate::{increment_2d_index, parse_pair_from_str, Vec2u};
 
 const DIRECTIONS: &[(isize, isize)] = &[(-1, 0), (1, 0), (0, -1), (0, 1)];
 

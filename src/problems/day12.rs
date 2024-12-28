@@ -1,12 +1,10 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use crate::increment_2d_index;
+use crate::{increment_2d_index, Vec2u};
 
 use super::utils;
 
 const NEIGHBOURS: &[(isize, isize)] = &[(-1, 0), (1, 0), (0, -1), (0, 1)];
-
-type Vec2u = (usize, usize);
 
 /// Solve the problem for day twelve, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {

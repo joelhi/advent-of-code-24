@@ -134,7 +134,7 @@ mod tests {
         let result =
             solve(&read_input_for_day(20).expect("Expect the data file to be there.")).unwrap();
 
-        assert_eq!(0, result[0]);
+        assert_eq!(1286, result[0]);
         assert_eq!(0, result[1]);
     }
 }

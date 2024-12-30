@@ -24,22 +24,26 @@ fn find_cheat_options(
     min_length: usize,
     cheat_steps: usize,
 ) -> Vec<usize> {
+    // Distance map from start for each pos in track.
     let start_dist_map = distance_map(source, walls, usize::MAX);
-    let mut cheats = Vec::new();
-    for (pos, dist) in start_dist_map.iter() {
-        let options = distance_map(pos, &HashSet::new(), cheat_steps);
-        cheats.extend(
-            options
-                .iter()
-                .map(|(pos, step)| {
-                    let cheat_end_dist = *start_dist_map.get(pos).unwrap_or(&(dist + step));
-                    cheat_end_dist.saturating_sub(dist + step)
-                })
-                .filter(|val| *val >= min_length),
-        );
-    }
 
-    cheats
+    // Find possible cheats for each location along the track.
+    start_dist_map
+        .iter()
+        .flat_map(|(&pos, &start_dist)| {
+            let start_dist_map = &start_dist_map;
+            distance_map(&pos, &HashSet::new(), cheat_steps)
+                .into_iter()
+                .filter_map(move |(reachable_pos, steps)| {
+                    let end_dist = start_dist_map
+                        .get(&reachable_pos)
+                        .copied()
+                        .unwrap_or(start_dist + steps);
+                    let cheat_advantage = end_dist.saturating_sub(start_dist + steps);
+                    (cheat_advantage >= min_length).then_some(cheat_advantage)
+                })
+        })
+        .collect()
 }
 
 /// Parse start, end, and wall locations from the map.
@@ -70,16 +74,19 @@ fn parse_maze(input_data: &[String]) -> Result<(Vec2u, Vec2u, HashSet<Vec2u>), S
 /// Trace path using bfs search
 fn distance_map(source: &Vec2u, walls: &HashSet<Vec2u>, max_dist: usize) -> HashMap<Vec2u, usize> {
     let mut queue = VecDeque::new();
-    let mut visited = HashMap::new();
+    let mut distances = HashMap::new();
+
     queue.push_back((*source, 0));
-    while let Some(next) = queue.pop_front() {
-        if !(visited.contains_key(&next.0) || next.1 > max_dist) {
-            visited.insert(next.0, next.1);
-            queue.extend(step(&next, walls, &visited));
+    while let Some((pos, dist)) = queue.pop_front() {
+        if distances.contains_key(&pos) || dist > max_dist {
+            continue;
         }
+
+        distances.insert(pos, dist);
+        queue.extend(step(&(pos, dist), walls, &distances));
     }
 
-    visited
+    distances
 }
 
 /// Compute valid steps from the current pos

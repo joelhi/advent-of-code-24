@@ -8,17 +8,26 @@ const DIRECTIONS: &[(isize, isize)] = &[(-1, 0), (1, 0), (0, -1), (0, 1)];
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (start, _, walls) = parse_maze(input_data)?;
 
-    let cheat_options = find_cheat_options(&start, &walls, 100);
+    let cheat_options_part_1 = find_cheat_options(&start, &walls, 100, 2);
+    let cheat_options_part_2 = find_cheat_options(&start, &walls, 100, 20);
 
-    Ok(vec![cheat_options.len() as u64, 0])
+    Ok(vec![
+        cheat_options_part_1.len() as u64,
+        cheat_options_part_2.len() as u64,
+    ])
 }
 
 /// Find possible cheating options
-fn find_cheat_options(source: &Vec2u, walls: &HashSet<Vec2u>, min_length: usize) -> Vec<usize> {
+fn find_cheat_options(
+    source: &Vec2u,
+    walls: &HashSet<Vec2u>,
+    min_length: usize,
+    cheat_steps: usize,
+) -> Vec<usize> {
     let start_dist_map = distance_map(source, walls, usize::MAX);
     let mut cheats = Vec::new();
     for (pos, dist) in start_dist_map.iter() {
-        let options = distance_map(pos, &HashSet::new(), 2);
+        let options = distance_map(pos, &HashSet::new(), cheat_steps);
         cheats.extend(
             options
                 .iter()
@@ -120,12 +129,20 @@ mod tests {
 
         let (start, _, walls) = parse_maze(&data).unwrap();
 
-        let cheat_options = find_cheat_options(&start, &walls, 1);
+        let cheat_options_part_1 = find_cheat_options(&start, &walls, 1, 2);
         assert_eq!(
             44,
-            cheat_options.len(),
+            cheat_options_part_1.len(),
             "Result for part 1 example should be 44 but was {}",
-            cheat_options.len()
+            cheat_options_part_1.len()
+        );
+
+        let cheat_options_part_2 = find_cheat_options(&start, &walls, 50, 20);
+        assert_eq!(
+            285,
+            cheat_options_part_2.len(),
+            "Result for part 2 example should be 285 but was {}",
+            cheat_options_part_2.len()
         );
     }
 

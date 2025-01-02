@@ -124,12 +124,14 @@ fn sort_increment_types(diffs: &[i32]) -> (Vec<DiffTuple>, Vec<DiffTuple>, Vec<D
 
 #[cfg(test)]
 mod tests {
-    use crate::{day2::solve, read_input_for_day};
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_2() {
-        let result =
-            solve(&read_input_for_day(2).expect("Expect the data file to be there.")).unwrap();
+        let result = super::solve(&crate::read_input_for_day(2).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(242, result[0]);
         assert_eq!(311, result[1]);

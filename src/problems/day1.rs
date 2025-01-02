@@ -45,12 +45,13 @@ fn read_input_into_lists(data: &[String]) -> Result<(Vec<u32>, Vec<u32>), String
 }
 #[cfg(test)]
 mod tests {
-    use crate::{day1::solve, read_input_for_day};
-
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_1() {
-        let result =
-            solve(&read_input_for_day(1).expect("Expect the data file to be there.")).unwrap();
+        let result = super::solve(&crate::read_input_for_day(1).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(2367773, result[0]);
         assert_eq!(21271939, result[1])

@@ -3,5 +3,8 @@ name = "advent-of-code-24"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+real_inputs = []
+
 [dependencies]
 regex = "1.11.1"

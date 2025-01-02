@@ -119,8 +119,7 @@ fn parse_input(input_data: &[String]) -> Result<ParsedInput, String> {
 mod tests {
     use std::str::FromStr;
 
-    use super::solve;
-    use crate::read_input_for_day;
+    use super::*;
 
     #[test]
     fn test_day_5_example() {
@@ -175,9 +174,12 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_5() {
-        let result =
-            solve(&read_input_for_day(5).expect("Expect the data file to be there.")).unwrap();
+        let result = solve(&crate::read_input_for_day(5).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(5374, result[0]);
         assert_eq!(4260, result[1]);

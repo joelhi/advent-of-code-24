@@ -76,7 +76,6 @@ fn find_matches_at(design: &str, start: usize, patterns: &[&str]) -> Vec<usize> 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::read_input_for_day;
 
     #[test]
     fn test_example_data() {
@@ -107,9 +106,12 @@ bbrgwb";
     }
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_19() {
-        let result =
-            solve(&read_input_for_day(19).expect("Expect the data file to be there.")).unwrap();
+        let result = solve(&crate::read_input_for_day(19).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(276, result[0]);
         assert_eq!(681226908011510, result[1]);

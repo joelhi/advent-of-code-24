@@ -74,9 +74,7 @@ fn split_val(val: u64) -> Result<Option<(u64, u64)>, String> {
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
-
-    use super::solve;
-    use crate::read_input_for_day;
+    use super::*;
 
     #[test]
     fn test_example_data() {
@@ -94,9 +92,12 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_11() {
-        let result =
-            solve(&read_input_for_day(11).expect("Expect the data file to be there.")).unwrap();
+        let result = solve(&crate::read_input_for_day(11).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(229043, result[0]);
         assert_eq!(272673043446478, result[1]);

@@ -112,7 +112,6 @@ fn step(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::read_input_for_day;
 
     #[test]
     fn test_example_data() {
@@ -154,9 +153,12 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_20() {
-        let result =
-            solve(&read_input_for_day(20).expect("Expect the data file to be there.")).unwrap();
+        let result = solve(&crate::read_input_for_day(20).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(1286, result[0]);
         assert_eq!(989316, result[1]);

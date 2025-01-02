@@ -71,9 +71,7 @@ fn find_valid_step(
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
-
-    use super::solve;
-    use crate::read_input_for_day;
+    use super::*;
 
     #[test]
     fn test_example_data() {
@@ -103,9 +101,12 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_10() {
-        let result =
-            solve(&read_input_for_day(10).expect("Expect the data file to be there.")).unwrap();
+        let result = solve(&crate::read_input_for_day(10).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(746, result[0]);
         assert_eq!(1541, result[1]);

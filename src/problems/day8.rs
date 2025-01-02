@@ -128,9 +128,7 @@ fn compute_antinodes(
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
-
-    use super::solve;
-    use crate::read_input_for_day;
+    use super::*;
 
     #[test]
     fn test_example_data() {
@@ -165,9 +163,12 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_8() {
-        let result =
-            solve(&read_input_for_day(8).expect("Expect the data file to be there.")).unwrap();
+        let result = solve(&crate::read_input_for_day(8).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(320, result[0]);
         assert_eq!(1157, result[1]);

@@ -231,9 +231,7 @@ fn parse_input_map(map: &[String]) -> (MapData, Vec2u) {
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;
-
     use super::*;
-    use crate::read_input_for_day;
 
     #[test]
     fn test_small_example_data_part_1() {
@@ -345,9 +343,12 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_15() {
-        let result =
-            solve(&read_input_for_day(15).expect("Expect the data file to be there.")).unwrap();
+        let result = solve(&crate::read_input_for_day(15).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(1505963, result[0]);
         assert_eq!(1543141, result[1]);

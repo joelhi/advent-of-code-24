@@ -112,13 +112,14 @@ fn find_operations_and_triggers(input_data: &str) -> Vec<&str> {
 
 #[cfg(test)]
 mod tests {
-    use super::solve;
-    use crate::read_input_for_day;
 
     #[test]
+    #[cfg(feature = "real_inputs")]
     fn test_day_3() {
-        let result =
-            solve(&read_input_for_day(3).expect("Expect the data file to be there.")).unwrap();
+        let result = super::solve(&crate::read_input_for_day(3).expect(
+            "To run the tests for the real inputs the file has to be found in the inputs folder.",
+        ))
+        .unwrap();
 
         assert_eq!(173529487, result[0]);
         assert_eq!(99532691, result[1]);

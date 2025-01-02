@@ -70,8 +70,8 @@ fn find_valid_step(
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
     use super::*;
+    use std::str::FromStr;
 
     #[test]
     fn test_example_data() {

@@ -127,8 +127,8 @@ fn find_guard_pos_and_dir(input_data: &[String]) -> Result<(Vec2u, Vec2i), Strin
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
     use super::*;
+    use std::str::FromStr;
 
     #[test]
     fn test_example_data() {

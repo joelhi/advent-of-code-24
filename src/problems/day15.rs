@@ -230,8 +230,8 @@ fn parse_input_map(map: &[String]) -> (MapData, Vec2u) {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
     use super::*;
+    use std::str::FromStr;
 
     #[test]
     fn test_small_example_data_part_1() {

@@ -96,8 +96,8 @@ fn parse_row(row: &str) -> Result<(u64, Vec<u64>), String> {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
     use super::*;
+    use std::str::FromStr;
 
     #[test]
     fn test_example_data() {

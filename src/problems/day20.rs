@@ -5,7 +5,7 @@ use crate::{increment_2d_index, Vec2u};
 
 const DIRECTIONS: &[(isize, isize)] = &[(-1, 0), (1, 0), (0, -1), (0, 1)];
 
-/// Solve the problem for day one, given the provided data.
+/// Solve the problem for day 20, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {
     let (start, _, walls) = parse_maze(input_data)?;
 

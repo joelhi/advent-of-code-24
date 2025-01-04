@@ -7,4 +7,5 @@ edition = "2021"
 real_inputs = []
 
 [dependencies]
+hashbrown = "0.15.2"
 regex = "1.11.1"

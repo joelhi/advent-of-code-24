@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use hashbrown::{HashMap, HashSet};
 
 use crate::{increment_2d_index, ortho_dir, Vec2i, Vec2u};
 

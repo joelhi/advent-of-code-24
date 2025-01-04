@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use hashbrown::HashSet;
 
 /// Solve the problem for day nine, given the provided data.
 pub fn solve(input_data: &[String]) -> Result<Vec<u64>, String> {

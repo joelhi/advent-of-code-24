@@ -1,4 +1,5 @@
-use std::collections::{HashSet, VecDeque};
+use std::collections::VecDeque;
+use hashbrown::HashSet;
 
 use crate::{increment_2d_index, parse_pair_from_str, Vec2u};
 
